@@ -1,0 +1,2674 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Azaz Tech — Engenharia de Software para Operações Críticas</title>
+<meta name="description" content="A Azaz Tech projeta, constrói e opera sistemas sob medida — ERPs, plataformas web e integrações — para empresas que não podem parar." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Albert+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+<script>
+  // Tweakable defaults — host can rewrite this block on disk.
+  window.__TWEAKS__ = /*EDITMODE-BEGIN*/{
+    "accentMode": "royal",
+    "gridDensity": "medium",
+    "heroHeadline": "",
+    "lang": "pt",
+    "denseHero": false
+  }/*EDITMODE-END*/;
+</script>
+
+<style>
+  /* =========================================================
+     TOKENS
+     ========================================================= */
+  :root{
+    --ink-0:#000000;
+    --ink-1:#05070d;
+    --ink-2:#0a0e17;
+    --ink-3:#11161f;
+    --ink-4:#1a212d;
+    --line:rgba(255,255,255,.06);
+    --line-strong:rgba(255,255,255,.12);
+
+    --fg:#f4f7fb;
+    --fg-dim:#aeb6c4;
+    --fg-mute:#6c7689;
+    --fg-faint:#3f4858;
+
+    --royal:#0779E4;
+    --electric:#1AA9FF;
+    --accent:linear-gradient(135deg,#0779E4 0%,#1AA9FF 100%);
+    --accent-soft:linear-gradient(135deg,rgba(7,121,228,.18),rgba(26,169,255,.10));
+    --glow:0 0 0 1px rgba(26,169,255,.25), 0 18px 60px -20px rgba(7,121,228,.55);
+
+    --display:"Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+    --body:"Albert Sans", ui-sans-serif, system-ui, sans-serif;
+    --mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    --r-sm:8px;
+    --r-md:14px;
+    --r-lg:22px;
+    --r-xl:28px;
+
+    --container:1200px;
+    --section-y:clamp(80px, 10vw, 140px);
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--ink-0);color:var(--fg);}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--body);
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+    background:
+      radial-gradient(900px 600px at 85% -10%, rgba(7,121,228,.16), transparent 60%),
+      radial-gradient(700px 500px at -5% 30%, rgba(26,169,255,.08), transparent 60%),
+      var(--ink-1);
+  }
+
+  /* Background grid — discreet circuit feel */
+  .bg-grid{
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,.025) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size:64px 64px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, #000 40%, transparent 95%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, #000 40%, transparent 95%);
+  }
+  body[data-grid="light"] .bg-grid{ opacity:.45; background-size:88px 88px; }
+  body[data-grid="medium"] .bg-grid{ opacity:.85; background-size:64px 64px; }
+  body[data-grid="dense"] .bg-grid{ opacity:1; background-size:44px 44px; }
+
+  /* Connection dots */
+  .bg-dots{
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    background-image:
+      radial-gradient(circle at 17% 22%, rgba(26,169,255,.55) 0 1.5px, transparent 2px),
+      radial-gradient(circle at 78% 12%, rgba(26,169,255,.35) 0 1.5px, transparent 2px),
+      radial-gradient(circle at 42% 68%, rgba(7,121,228,.45) 0 1.5px, transparent 2px),
+      radial-gradient(circle at 88% 78%, rgba(26,169,255,.4) 0 1.5px, transparent 2px),
+      radial-gradient(circle at 8% 88%, rgba(7,121,228,.35) 0 1.5px, transparent 2px);
+  }
+
+  /* =========================================================
+     TYPOGRAPHY
+     ========================================================= */
+  h1,h2,h3,h4{
+    font-family:var(--display);
+    font-weight:600;
+    letter-spacing:-0.02em;
+    line-height:1.05;
+    color:var(--fg);
+    margin:0;
+  }
+  h1{ font-size:clamp(40px, 6.2vw, 84px); letter-spacing:-0.035em; }
+  h2{ font-size:clamp(30px, 4vw, 52px); letter-spacing:-0.028em; }
+  h3{ font-size:clamp(20px, 2vw, 24px); }
+  p{ margin:0; color:var(--fg-dim); }
+
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    font-weight:500;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--electric);
+    display:inline-flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{
+    content:""; width:24px; height:1px; background:linear-gradient(90deg, var(--electric), transparent);
+  }
+
+  .container{
+    width:100%;
+    max-width:var(--container);
+    margin:0 auto;
+    padding:0 24px;
+    position:relative;
+    z-index:1;
+  }
+
+  /* =========================================================
+     BUTTONS
+     ========================================================= */
+  .btn{
+    --bg:transparent;
+    --bd:rgba(255,255,255,.14);
+    --fg-btn:var(--fg);
+    display:inline-flex; align-items:center; gap:10px;
+    padding:13px 22px;
+    border-radius:999px;
+    background:var(--bg);
+    color:var(--fg-btn);
+    border:1px solid var(--bd);
+    font-family:var(--body);
+    font-size:14.5px;
+    font-weight:500;
+    letter-spacing:.01em;
+    cursor:pointer;
+    text-decoration:none;
+    transition: transform .25s ease, background .25s ease, border-color .25s ease, box-shadow .35s ease;
+    white-space:nowrap;
+  }
+  .btn:hover{ transform:translateY(-1px); border-color:rgba(255,255,255,.28); }
+  .btn .arrow{ transition:transform .25s ease; }
+  .btn:hover .arrow{ transform:translateX(3px); }
+
+  .btn-primary{
+    --bg: linear-gradient(135deg,#0779E4 0%,#1AA9FF 100%);
+    --bd: transparent;
+    --fg-btn:#fff;
+    box-shadow: 0 10px 40px -12px rgba(7,121,228,.7), inset 0 1px 0 rgba(255,255,255,.25);
+  }
+  .btn-primary:hover{
+    box-shadow: 0 16px 48px -10px rgba(26,169,255,.75), inset 0 1px 0 rgba(255,255,255,.3);
+    border-color:transparent;
+  }
+  .btn-ghost{ --bg:rgba(255,255,255,.025); }
+  .btn-ghost:hover{ --bg:rgba(255,255,255,.05); }
+
+  /* =========================================================
+     NAVBAR
+     ========================================================= */
+  .nav{
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    transition: background .3s ease, backdrop-filter .3s ease, border-color .3s ease;
+    border-bottom:1px solid transparent;
+  }
+  .nav.scrolled{
+    background:rgba(5,7,13,.72);
+    -webkit-backdrop-filter:saturate(180%) blur(18px);
+    backdrop-filter:saturate(180%) blur(18px);
+    border-bottom-color:var(--line);
+  }
+  .nav-inner{
+    max-width:var(--container);
+    margin:0 auto;
+    padding:18px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:24px;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    text-decoration:none; color:var(--fg);
+  }
+  .brand-mark{
+    width:38px; height:38px;
+    display:grid; place-items:center;
+    overflow:visible;
+  }
+  .brand-mark img{
+    width:100%; height:100%; object-fit:contain;
+    filter: drop-shadow(0 2px 6px rgba(26,169,255,.45));
+  }
+  .brand-word{
+    font-family:var(--display);
+    font-weight:600; letter-spacing:-0.01em;
+    font-size:17px;
+  }
+  .brand-word .tech{ color:var(--fg-mute); font-weight:400; margin-left:4px; font-size:13px;}
+
+  .nav-links{
+    display:flex; align-items:center; gap:6px;
+  }
+  .nav-links a{
+    color:var(--fg-dim);
+    text-decoration:none;
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:14px;
+    transition: color .2s, background .2s;
+  }
+  .nav-links a:hover{ color:var(--fg); background:rgba(255,255,255,.04); }
+  .nav-cta{ display:flex; align-items:center; gap:8px; }
+
+  .nav-toggle{
+    display:none;
+    width:40px; height:40px;
+    border-radius:10px; border:1px solid var(--line-strong);
+    background:rgba(255,255,255,.02);
+    color:var(--fg);
+    align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+
+  @media (max-width: 880px){
+    .nav-links, .nav-cta .btn-text{ display:none; }
+    .nav-toggle{ display:inline-flex; }
+    .mobile-menu{ display:block; }
+  }
+  .mobile-menu{
+    display:none;
+    position:fixed; inset:64px 0 auto 0;
+    background:rgba(5,7,13,.96);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--line);
+    padding:24px;
+    z-index:49;
+    transform:translateY(-110%);
+    transition:transform .35s cubic-bezier(.2,.7,.2,1);
+  }
+  .mobile-menu.open{ transform:translateY(0); }
+  .mobile-menu a{
+    display:block;
+    color:var(--fg);
+    text-decoration:none;
+    padding:14px 4px;
+    font-family:var(--display);
+    font-size:22px;
+    font-weight:500;
+    letter-spacing:-0.02em;
+    border-bottom:1px solid var(--line);
+  }
+  .mobile-menu .btn-primary{ margin-top:18px; width:100%; justify-content:center; }
+
+  /* =========================================================
+     HERO
+     ========================================================= */
+  .hero{
+    padding: clamp(140px, 16vw, 200px) 0 var(--section-y);
+    position:relative;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns: 1.15fr .85fr;
+    gap:60px;
+    align-items:center;
+  }
+  @media (max-width: 920px){
+    .hero-grid{ grid-template-columns:1fr; gap:48px; }
+    .hero-visual{ order:-1; max-width:380px; margin:0 auto; }
+  }
+
+  .hero h1{
+    margin-top:20px;
+    background: linear-gradient(180deg, #ffffff 0%, #c7d0de 100%);
+    -webkit-background-clip:text; background-clip:text;
+    color:transparent;
+  }
+  .hero h1 .accent{
+    background: linear-gradient(135deg,#0779E4 0%,#1AA9FF 80%);
+    -webkit-background-clip:text; background-clip:text;
+    color:transparent;
+  }
+  .hero-sub{
+    margin-top:24px;
+    font-size:clamp(16px, 1.4vw, 18.5px);
+    color:var(--fg-dim);
+    max-width:560px;
+    line-height:1.6;
+  }
+  .hero-cta{
+    margin-top:36px;
+    display:flex; gap:12px; flex-wrap:wrap;
+  }
+  .hero-stats{
+    margin-top:64px;
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:24px;
+    max-width:520px;
+  }
+  .hero-stats .stat{
+    border-left:1px solid var(--line-strong);
+    padding-left:18px;
+  }
+  .hero-stats .num{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:clamp(28px, 3vw, 36px);
+    letter-spacing:-0.03em;
+    background: linear-gradient(135deg,#fff,#9eb4d2);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    line-height:1;
+  }
+  .hero-stats .lbl{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--fg-mute);
+    margin-top:8px;
+  }
+
+  /* Hero visual */
+  .hero-visual{
+    position:relative;
+    aspect-ratio:1/1;
+    display:grid; place-items:center;
+  }
+  .orbit{
+    position:absolute;
+    border:1px solid var(--line-strong);
+    border-radius:50%;
+    inset:0;
+    animation: orbit-spin 60s linear infinite;
+  }
+  .orbit::before, .orbit::after{
+    content:""; position:absolute;
+    width:8px; height:8px; border-radius:50%;
+    background:var(--electric);
+    box-shadow:0 0 12px rgba(26,169,255,.9), 0 0 24px rgba(26,169,255,.5);
+  }
+  .orbit::before{ top:-4px; left:50%; transform:translateX(-50%); }
+  .orbit::after{ bottom:-4px; right:20%; }
+  .orbit.o2{ inset:10%; animation-duration:90s; animation-direction:reverse; opacity:.7; }
+  .orbit.o2::after{ background:var(--royal); }
+  .orbit.o3{ inset:22%; animation-duration:120s; opacity:.5; }
+  .orbit.o3::before{ background:#fff; box-shadow:0 0 10px rgba(255,255,255,.7); }
+  .orbit.o3::after{ display:none; }
+
+  @keyframes orbit-spin { to { transform:rotate(360deg); } }
+
+  .logo-float{
+    position:relative;
+    width:72%;
+    aspect-ratio:1/1;
+    display:grid; place-items:center;
+    animation: float 7s ease-in-out infinite;
+  }
+  .logo-float::after{
+    content:""; position:absolute; inset:-25%;
+    background: radial-gradient(circle, rgba(26,169,255,.35), transparent 55%);
+    z-index:-1; filter:blur(50px);
+  }
+  .logo-float img{
+    width:100%; height:100%;
+    object-fit:contain;
+    filter:
+      drop-shadow(0 14px 40px rgba(7,121,228,.55))
+      drop-shadow(0 0 18px rgba(26,169,255,.25));
+  }
+  @keyframes float {
+    0%,100% { transform:translateY(0) rotate(0deg); }
+    50% { transform:translateY(-10px) rotate(.5deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .orbit, .logo-float, *{ animation:none !important; transition:none !important; }
+  }
+
+  /* =========================================================
+     STACK STRIP
+     ========================================================= */
+  .stack-strip{
+    padding: 40px 0;
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    background: rgba(255,255,255,.012);
+  }
+  .stack-strip .container{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:40px; flex-wrap:wrap;
+  }
+  .stack-strip .lbl{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--fg-mute);
+  }
+  .stack-list{
+    display:flex; gap:32px 44px; flex-wrap:wrap;
+    align-items:center;
+  }
+  .stack-list .item{
+    font-family:var(--display);
+    font-weight:500;
+    font-size:17px;
+    color:var(--fg-dim);
+    display:flex; align-items:center; gap:10px;
+    transition:color .2s;
+  }
+  .stack-list .item:hover{ color:var(--fg); }
+  .stack-list .item svg{ width:18px; height:18px; opacity:.8; }
+
+  /* =========================================================
+     SECTION HEADER
+     ========================================================= */
+  .section{ padding: var(--section-y) 0; position:relative; }
+  .section-head{
+    max-width:760px;
+    margin:0 auto clamp(48px, 6vw, 80px);
+    text-align:center;
+  }
+  .section-head h2{
+    margin-top:18px;
+    background: linear-gradient(180deg,#fff 0%, #b7c2d2 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .section-head p{
+    margin-top:16px;
+    font-size:17px;
+    color:var(--fg-dim);
+  }
+
+  /* =========================================================
+     SERVICES
+     ========================================================= */
+  .services-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:18px;
+  }
+  @media (max-width:980px){ .services-grid{ grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:640px){ .services-grid{ grid-template-columns:1fr;} }
+
+  .card{
+    position:relative;
+    padding:32px 28px 28px;
+    background: linear-gradient(180deg, rgba(255,255,255,.025) 0%, rgba(255,255,255,.005) 100%);
+    border:1px solid var(--line);
+    border-radius:var(--r-lg);
+    transition: transform .35s cubic-bezier(.2,.7,.2,1), border-color .35s, box-shadow .45s;
+    overflow:hidden;
+    isolation:isolate;
+  }
+  .card::before{
+    content:""; position:absolute; inset:0;
+    background: radial-gradient(420px 200px at var(--mx,50%) var(--my,0%), rgba(26,169,255,.10), transparent 60%);
+    opacity:0; transition:opacity .4s; z-index:-1;
+  }
+  .card:hover{
+    transform:translateY(-4px);
+    border-color:rgba(26,169,255,.28);
+    box-shadow: 0 30px 60px -30px rgba(7,121,228,.5);
+  }
+  .card:hover::before{ opacity:1; }
+  .card .icon{
+    width:46px; height:46px; border-radius:12px;
+    display:grid; place-items:center;
+    background: linear-gradient(135deg, rgba(7,121,228,.18), rgba(26,169,255,.08));
+    border:1px solid rgba(26,169,255,.22);
+    color:#9fd2ff;
+    margin-bottom:22px;
+  }
+  .card h3{
+    font-size:21px; letter-spacing:-0.02em;
+    margin-bottom:10px;
+  }
+  .card .desc{
+    font-size:14.5px;
+    color:var(--fg-dim);
+    line-height:1.6;
+  }
+  .card .tags{
+    display:flex; flex-wrap:wrap; gap:6px;
+    margin-top:22px;
+    padding-top:18px;
+    border-top:1px dashed var(--line);
+  }
+  .tag{
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:.06em;
+    color:var(--fg-dim);
+    padding:5px 10px;
+    border-radius:999px;
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--line);
+  }
+
+  /* =========================================================
+     DIFFERENTIALS + CODE
+     ========================================================= */
+  .why{
+    display:grid;
+    grid-template-columns: 1fr 1.05fr;
+    gap:60px;
+    align-items:center;
+  }
+  @media (max-width:980px){ .why{ grid-template-columns:1fr; } }
+
+  .why-list{
+    display:flex; flex-direction:column;
+    counter-reset: w;
+  }
+  .why-item{
+    display:grid;
+    grid-template-columns: 56px 1fr;
+    gap:18px;
+    padding:24px 0;
+    border-top:1px solid var(--line);
+    counter-increment:w;
+  }
+  .why-item:last-child{ border-bottom:1px solid var(--line); }
+  .why-item .num{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--electric);
+    letter-spacing:.1em;
+    padding-top:4px;
+  }
+  .why-item .num::before{ content:"0" counter(w); }
+  .why-item h3{ font-size:19px; margin-bottom:6px; }
+  .why-item p{ font-size:14.5px; }
+
+  /* Code window */
+  .code-window{
+    border:1px solid var(--line-strong);
+    border-radius:var(--r-lg);
+    background:linear-gradient(180deg, #0a0e17 0%, #050810 100%);
+    overflow:hidden;
+    box-shadow:
+      0 40px 80px -30px rgba(0,0,0,.7),
+      0 0 0 1px rgba(26,169,255,.08),
+      inset 0 1px 0 rgba(255,255,255,.04);
+    position:relative;
+  }
+  .code-window::after{
+    content:""; position:absolute; inset:0;
+    background: radial-gradient(600px 200px at 70% 0%, rgba(26,169,255,.10), transparent 70%);
+    pointer-events:none;
+  }
+  .code-head{
+    display:flex; align-items:center; gap:12px;
+    padding:14px 16px;
+    border-bottom:1px solid var(--line);
+    background:rgba(255,255,255,.02);
+  }
+  .traffic{ display:flex; gap:6px; }
+  .traffic span{ width:11px; height:11px; border-radius:50%; background:#1a212d; }
+  .traffic span:nth-child(1){ background:#3a4150; }
+  .traffic span:nth-child(2){ background:#2a3140; }
+  .traffic span:nth-child(3){ background:#2a3140; }
+  .code-tab{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--fg-mute);
+    padding:6px 12px;
+    border-radius:6px;
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--line);
+  }
+  .code-body{
+    font-family:var(--mono);
+    font-size:13px;
+    line-height:1.85;
+    padding:20px 22px;
+    color:var(--fg-dim);
+    overflow-x:auto;
+    white-space:pre;
+    position:relative;
+  }
+  .code-body .ln{ color:var(--fg-faint); user-select:none; display:inline-block; width:24px; }
+  .c-key{ color:#c98aff; }
+  .c-str{ color:#7be3a4; }
+  .c-fn{ color:#1AA9FF; }
+  .c-com{ color:#5a6478; font-style:italic; }
+  .c-typ{ color:#9fd2ff; }
+  .c-num{ color:#ffb86c; }
+
+  /* =========================================================
+     PROCESS
+     ========================================================= */
+  .process{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap:0;
+    position:relative;
+  }
+  @media (max-width:880px){ .process{ grid-template-columns:1fr 1fr; gap:24px 0;} }
+  @media (max-width:540px){ .process{ grid-template-columns:1fr;} }
+
+  .process::before{
+    content:""; position:absolute;
+    left:8%; right:8%; top:32px; height:1px;
+    background:linear-gradient(90deg, transparent, var(--electric) 20%, var(--electric) 80%, transparent);
+    opacity:.35;
+  }
+  @media (max-width:880px){ .process::before{ display:none; } }
+
+  .step{
+    padding:0 24px;
+    text-align:center;
+    position:relative;
+  }
+  .step .node{
+    width:64px; height:64px;
+    margin:0 auto 24px;
+    border-radius:50%;
+    display:grid; place-items:center;
+    background: radial-gradient(circle at 30% 30%, #0c1322, #05070d);
+    border:1px solid rgba(26,169,255,.3);
+    box-shadow: 0 0 0 6px rgba(5,7,13,1), 0 0 24px -4px rgba(26,169,255,.4);
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--electric);
+    letter-spacing:.05em;
+    position:relative; z-index:1;
+  }
+  .step h3{ font-size:18px; margin-bottom:8px; }
+  .step p{ font-size:14px; color:var(--fg-dim); max-width:200px; margin:0 auto; }
+
+  /* =========================================================
+     METRICS BAND
+     ========================================================= */
+  .metrics{
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    background:
+      radial-gradient(900px 300px at 50% 0%, rgba(7,121,228,.12), transparent 60%),
+      rgba(255,255,255,.012);
+    padding: 80px 0;
+  }
+  .metrics-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:24px;
+    text-align:center;
+  }
+  @media (max-width:780px){ .metrics-grid{ grid-template-columns:repeat(2,1fr); gap:48px 24px;} }
+  .metric .v{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:clamp(36px, 4.5vw, 56px);
+    letter-spacing:-0.04em;
+    background:linear-gradient(180deg,#fff,#9eb4d2);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    line-height:1;
+  }
+  .metric .v sup{ font-size:.5em; color:var(--electric); -webkit-text-fill-color:var(--electric); margin-left:2px; }
+  .metric .k{
+    font-family:var(--mono);
+    font-size:11.5px;
+    text-transform:uppercase;
+    letter-spacing:.18em;
+    color:var(--fg-mute);
+    margin-top:12px;
+  }
+
+  /* =========================================================
+     CONTACT
+     ========================================================= */
+  .contact{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:60px;
+    align-items:start;
+  }
+  @media (max-width:920px){ .contact{ grid-template-columns:1fr; gap:48px;} }
+
+  .contact-info h2{
+    background:linear-gradient(180deg,#fff,#b7c2d2);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .info-list{
+    margin-top:36px;
+    display:flex; flex-direction:column; gap:20px;
+  }
+  .info-row{
+    display:flex; align-items:center; gap:16px;
+    color:var(--fg-dim);
+    font-size:14.5px;
+  }
+  .info-row .ic{
+    width:42px; height:42px; border-radius:12px;
+    background:rgba(255,255,255,.025);
+    border:1px solid var(--line);
+    display:grid; place-items:center;
+    color:var(--electric);
+    flex-shrink:0;
+  }
+  .info-row .lbl{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--fg-mute);
+    display:block; margin-bottom:2px;
+  }
+  .info-row .val{ color:var(--fg); font-size:15px; }
+
+  .form{
+    background: linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,.005));
+    border:1px solid var(--line-strong);
+    border-radius:var(--r-xl);
+    padding:32px;
+    box-shadow:
+      0 30px 80px -30px rgba(0,0,0,.7),
+      inset 0 1px 0 rgba(255,255,255,.04);
+  }
+  .form-row{ margin-bottom:16px; }
+  .form-row.two{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media (max-width:520px){ .form-row.two{ grid-template-columns:1fr; } }
+  .form label{
+    display:block;
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--fg-mute);
+    margin-bottom:8px;
+  }
+  .form input, .form select, .form textarea{
+    width:100%;
+    background:rgba(0,0,0,.4);
+    border:1px solid var(--line-strong);
+    border-radius:12px;
+    padding:13px 14px;
+    color:var(--fg);
+    font-family:var(--body);
+    font-size:15px;
+    transition:border-color .2s, box-shadow .25s, background .2s;
+    outline:none;
+  }
+  .form input:focus, .form select:focus, .form textarea:focus{
+    border-color: rgba(26,169,255,.55);
+    box-shadow: 0 0 0 4px rgba(26,169,255,.12);
+    background:rgba(0,0,0,.55);
+  }
+  .form textarea{ resize:vertical; min-height:120px; font-family:var(--body); }
+  .form select{
+    appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path fill='%231AA9FF' d='M6 8L1 3h10z'/></svg>");
+    background-repeat:no-repeat;
+    background-position:calc(100% - 14px) center;
+    padding-right:36px;
+  }
+  .form .btn-primary{ width:100%; justify-content:center; margin-top:8px; }
+  .form .privacy{
+    margin-top:14px;
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--fg-mute);
+    text-align:center;
+    letter-spacing:.04em;
+  }
+
+  /* =========================================================
+     FOOTER
+     ========================================================= */
+  footer{
+    border-top:1px solid var(--line);
+    padding: 64px 0 24px;
+    background:rgba(0,0,0,.4);
+    position:relative; z-index:1;
+  }
+  .foot-grid{
+    display:grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1fr;
+    gap:40px;
+  }
+  @media (max-width:780px){ .foot-grid{ grid-template-columns:1fr 1fr; } }
+  @media (max-width:480px){ .foot-grid{ grid-template-columns:1fr; } }
+
+  .foot-brand p{ margin-top:16px; font-size:14px; max-width:300px; }
+  .foot-col h4{
+    font-family:var(--mono);
+    font-size:11px;
+    font-weight:500;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--fg-mute);
+    margin-bottom:18px;
+  }
+  .foot-col ul{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:10px; }
+  .foot-col a{
+    color:var(--fg-dim); text-decoration:none; font-size:14px;
+    transition:color .2s;
+  }
+  .foot-col a:hover{ color:var(--fg); }
+
+  .foot-bottom{
+    margin-top:56px;
+    padding-top:24px;
+    border-top:1px solid var(--line);
+    display:flex; align-items:center; justify-content:space-between;
+    gap:16px; flex-wrap:wrap;
+    font-family:var(--mono);
+    font-size:11.5px;
+    color:var(--fg-mute);
+    letter-spacing:.06em;
+  }
+  .socials{ display:flex; gap:8px; }
+  .socials a{
+    width:36px; height:36px; border-radius:10px;
+    border:1px solid var(--line);
+    background:rgba(255,255,255,.02);
+    color:var(--fg-dim);
+    display:grid; place-items:center;
+    transition:all .2s;
+  }
+  .socials a:hover{
+    border-color:rgba(26,169,255,.4);
+    color:var(--electric);
+    background:rgba(26,169,255,.06);
+  }
+
+  /* =========================================================
+     REVEAL
+     ========================================================= */
+  [data-reveal]{
+    opacity:0;
+    transform:translateY(24px);
+    transition: opacity .9s cubic-bezier(.2,.7,.2,1), transform .9s cubic-bezier(.2,.7,.2,1);
+    transition-delay: var(--rd, 0ms);
+  }
+  [data-reveal].is-in{ opacity:1; transform:translateY(0); }
+  @media (prefers-reduced-motion: reduce){
+    [data-reveal]{ opacity:1; transform:none; }
+  }
+
+  /* =========================================================
+     TWEAKS PANEL
+     ========================================================= */
+  #tweaks{
+    position:fixed; right:20px; bottom:20px; z-index:100;
+    width:280px;
+    background:rgba(8,12,20,.92);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border:1px solid var(--line-strong);
+    border-radius:16px;
+    padding:18px;
+    box-shadow:0 30px 80px -20px rgba(0,0,0,.7);
+    transform: translateY(20px); opacity:0; pointer-events:none;
+    transition:opacity .25s, transform .25s;
+    font-family:var(--body);
+  }
+  #tweaks.open{ transform:translateY(0); opacity:1; pointer-events:auto; }
+  #tweaks .head{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:14px;
+  }
+  #tweaks .head h4{
+    font-family:var(--display);
+    font-size:14px;
+    letter-spacing:-0.01em;
+    color:var(--fg);
+    margin:0;
+  }
+  #tweaks .head button{
+    background:none; border:0; color:var(--fg-mute);
+    cursor:pointer; padding:4px;
+  }
+  #tweaks .tw-row{ margin-bottom:14px; }
+  #tweaks .tw-row:last-child{ margin-bottom:0; }
+  #tweaks .tw-lbl{
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--fg-mute);
+    display:block; margin-bottom:8px;
+  }
+  #tweaks .seg{
+    display:flex; gap:4px;
+    background:rgba(0,0,0,.4);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:3px;
+  }
+  #tweaks .seg button{
+    flex:1; background:transparent; border:0;
+    padding:7px 8px; font-size:12px;
+    color:var(--fg-dim); cursor:pointer;
+    border-radius:7px;
+    font-family:var(--body);
+    transition: background .2s, color .2s;
+  }
+  #tweaks .seg button.on{
+    background:rgba(26,169,255,.15);
+    color:var(--fg);
+  }
+  #tweaks input[type="text"]{
+    width:100%;
+    background:rgba(0,0,0,.4);
+    border:1px solid var(--line);
+    border-radius:8px;
+    color:var(--fg);
+    font-family:var(--body); font-size:13px;
+    padding:9px 10px;
+    outline:none;
+  }
+  #tweaks input[type="text"]:focus{ border-color: rgba(26,169,255,.5); }
+
+  /* Accent modes */
+  body[data-accent="royal"]{ --royal:#0779E4; --electric:#1AA9FF; }
+  body[data-accent="cyan"]{ --royal:#0aa6ff; --electric:#43dfff; }
+  body[data-accent="violet"]{ --royal:#6e5cff; --electric:#9c8bff; }
+
+  /* =========================================================
+     CASES / PORTFOLIO
+     ========================================================= */
+  .cases-head{ text-align:left; max-width:none; margin-bottom: clamp(48px, 6vw, 72px); display:grid; grid-template-columns: 1fr auto; gap:24px; align-items:end; }
+  @media (max-width:780px){ .cases-head{ grid-template-columns:1fr; } }
+  .cases-head h2{
+    background:linear-gradient(180deg,#fff 0%, #b7c2d2 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    margin-top:18px;
+  }
+  .cases-head .meta{
+    font-family:var(--mono);
+    font-size:11.5px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--fg-mute);
+    display:flex; align-items:center; gap:10px;
+    padding-bottom:6px;
+  }
+  .cases-head .meta::before{ content:""; width:18px; height:1px; background:var(--fg-mute); }
+
+  .case-block{
+    position:relative;
+    border:1px solid var(--line);
+    border-radius:var(--r-xl);
+    background: linear-gradient(180deg, rgba(255,255,255,.022) 0%, rgba(255,255,255,.004) 100%);
+    padding: clamp(32px, 4vw, 56px);
+    margin-bottom:32px;
+    overflow:hidden;
+    isolation:isolate;
+  }
+  .case-block::before{
+    content:""; position:absolute; inset:0;
+    background:
+      radial-gradient(800px 300px at 0% 0%, rgba(7,121,228,.10), transparent 60%),
+      radial-gradient(600px 240px at 100% 100%, rgba(26,169,255,.08), transparent 60%);
+    z-index:-1; pointer-events:none;
+  }
+  .case-block:last-child{ margin-bottom:0; }
+
+  .case-head{
+    display:flex; align-items:baseline; gap:18px; flex-wrap:wrap;
+    margin-bottom:8px;
+  }
+  .case-num{
+    font-family:var(--mono);
+    font-size:13px;
+    letter-spacing:.18em;
+    color:var(--electric);
+  }
+  .case-tags{
+    display:flex; gap:6px; flex-wrap:wrap;
+    margin-left:auto;
+  }
+  .case-tags .tag{ background:rgba(26,169,255,.06); border-color:rgba(26,169,255,.18); color:#9fd2ff; }
+
+  .case-title{
+    font-family:var(--display);
+    font-size:clamp(30px, 3.6vw, 44px);
+    font-weight:600;
+    letter-spacing:-0.03em;
+    line-height:1.05;
+    background:linear-gradient(180deg,#fff,#cfd8e6);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    margin: 8px 0 10px;
+  }
+  .case-tagline{
+    font-size:17px;
+    color:var(--fg-dim);
+    max-width:760px;
+    line-height:1.55;
+  }
+
+  .case-body{
+    margin-top:40px;
+    display:grid;
+    grid-template-columns: 1.05fr .95fr;
+    gap:48px;
+    align-items:start;
+  }
+  @media (max-width:980px){
+    .case-body{ grid-template-columns:1fr; gap:36px; }
+  }
+
+  .case-mock{
+    position:relative;
+    border:1px solid var(--line-strong);
+    border-radius:var(--r-lg);
+    background:linear-gradient(180deg, #0a0e17 0%, #050810 100%);
+    overflow:hidden;
+    box-shadow:
+      0 50px 80px -30px rgba(0,0,0,.75),
+      0 0 0 1px rgba(26,169,255,.08),
+      inset 0 1px 0 rgba(255,255,255,.04);
+  }
+  .mock-chrome{
+    display:flex; align-items:center; gap:12px;
+    padding:11px 14px;
+    background:rgba(255,255,255,.02);
+    border-bottom:1px solid var(--line);
+    font-family:var(--mono);
+    font-size:11.5px;
+    color:var(--fg-mute);
+  }
+  .mock-chrome.win{ background:#0c1322; }
+  .mock-chrome .traffic{ display:flex; gap:6px; }
+  .mock-chrome .traffic span{ width:10px; height:10px; border-radius:50%; background:#2a3140; }
+  .mock-chrome .traffic span:nth-child(1){ background:#3a4150; }
+  .mock-chrome .addr{
+    flex:1; text-align:center;
+    background:rgba(0,0,0,.4);
+    padding:5px 12px;
+    border-radius:6px;
+    border:1px solid var(--line);
+  }
+  .mock-chrome .winctl{ display:flex; gap:6px; color:var(--fg-mute); }
+  .mock-chrome .winctl span{ padding:2px 7px; border-radius:3px; }
+  .mock-chrome .winctl span:hover{ background:rgba(255,255,255,.04); }
+
+  .mock-body{
+    display:grid;
+    grid-template-columns: 130px 1fr;
+    min-height:340px;
+  }
+  @media (max-width:540px){ .mock-body{ grid-template-columns:90px 1fr; min-height:280px; } }
+
+  .mock-side{
+    border-right:1px solid var(--line);
+    padding:14px 8px;
+    display:flex; flex-direction:column; gap:3px;
+    background:rgba(0,0,0,.25);
+  }
+  .mock-side .si{
+    font-family:var(--mono);
+    font-size:10.5px;
+    color:var(--fg-mute);
+    padding:7px 10px;
+    border-radius:6px;
+    display:flex; align-items:center; gap:8px;
+    white-space:nowrap;
+    overflow:hidden;
+  }
+  .mock-side .si .dot{ width:6px; height:6px; border-radius:50%; background:var(--fg-faint); flex-shrink:0; }
+  .mock-side .si.on{
+    background:linear-gradient(90deg, rgba(7,121,228,.22), rgba(26,169,255,.06));
+    color:#fff;
+  }
+  .mock-side .si.on .dot{ background:var(--electric); box-shadow:0 0 8px var(--electric); }
+
+  .mock-main{ padding:18px; display:flex; flex-direction:column; gap:14px; }
+  .mock-kpis{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .mock-kpi{
+    border:1px solid var(--line);
+    border-radius:9px;
+    padding:10px 12px;
+    background:rgba(255,255,255,.015);
+  }
+  .mock-kpi .v{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:18px;
+    letter-spacing:-0.02em;
+    color:#fff;
+  }
+  .mock-kpi .k{
+    font-family:var(--mono);
+    font-size:9px;
+    text-transform:uppercase;
+    letter-spacing:.12em;
+    color:var(--fg-mute);
+    margin-top:3px;
+  }
+  .mock-table{
+    border:1px solid var(--line);
+    border-radius:10px;
+    overflow:hidden;
+    background:rgba(0,0,0,.25);
+  }
+  .mock-table .row{
+    display:grid;
+    grid-template-columns: 1fr 70px 70px;
+    padding:9px 12px;
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--fg-dim);
+    border-bottom:1px solid var(--line);
+    align-items:center;
+  }
+  .mock-table .row:last-child{ border-bottom:0; }
+  .mock-table .row.head{ color:var(--fg-mute); font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; background:rgba(255,255,255,.02); }
+  .mock-pill{
+    display:inline-block; padding:2px 8px; border-radius:999px;
+    font-size:9.5px; font-family:var(--mono); letter-spacing:.04em;
+    border:1px solid;
+  }
+  .mock-pill.op{ color:#7be3a4; border-color:rgba(123,227,164,.3); background:rgba(123,227,164,.08); }
+  .mock-pill.wait{ color:#ffb86c; border-color:rgba(255,184,108,.3); background:rgba(255,184,108,.08); }
+  .mock-pill.done{ color:#9fd2ff; border-color:rgba(159,210,255,.3); background:rgba(159,210,255,.08); }
+
+  /* Yuta-style form mockup */
+  .mock-form{ display:flex; flex-direction:column; gap:10px; padding:6px 4px; }
+  .mock-form .field{
+    display:grid; grid-template-columns:90px 1fr; gap:10px;
+    font-family:var(--mono); font-size:11px;
+    align-items:center;
+  }
+  .mock-form .field .l{ color:var(--fg-mute); text-transform:uppercase; letter-spacing:.1em; font-size:9.5px; }
+  .mock-form .field .v{ color:var(--fg); background:rgba(0,0,0,.35); border:1px solid var(--line); padding:6px 10px; border-radius:6px; }
+  .mock-totals{
+    border:1px solid rgba(26,169,255,.25);
+    background:linear-gradient(135deg, rgba(7,121,228,.10), rgba(26,169,255,.03));
+    border-radius:10px;
+    padding:12px 14px;
+    display:grid; grid-template-columns:1fr 1fr; gap:8px 14px;
+    font-family:var(--mono); font-size:11px;
+  }
+  .mock-totals .t{ display:flex; justify-content:space-between; color:var(--fg-dim); }
+  .mock-totals .t b{ color:#fff; font-weight:600; }
+  .mock-emit{
+    margin-top:8px;
+    display:inline-flex; align-items:center; gap:8px;
+    padding:8px 14px;
+    border-radius:8px;
+    background:linear-gradient(135deg,#0779E4,#1AA9FF);
+    color:#fff;
+    font-family:var(--body); font-size:12px; font-weight:500;
+    width:fit-content;
+  }
+
+  /* Case side panel: description + stack + metrics */
+  .case-aside h4{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--fg-mute);
+    margin: 0 0 14px;
+    font-weight:500;
+  }
+  .case-aside .desc{
+    font-size:15.5px;
+    line-height:1.65;
+    color:var(--fg-dim);
+    margin-bottom:28px;
+  }
+  .case-stack{
+    display:flex; gap:6px; flex-wrap:wrap;
+    margin-bottom:32px;
+  }
+  .case-metrics{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    border-radius:14px;
+    overflow:hidden;
+  }
+  .case-metrics .m{
+    padding:18px 20px;
+    background:rgba(8,12,20,.6);
+  }
+  .case-metrics .v{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:26px;
+    letter-spacing:-0.03em;
+    line-height:1;
+    background:linear-gradient(180deg,#fff,#9eb4d2);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .case-metrics .k{
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--fg-mute);
+    margin-top:8px;
+  }
+
+  /* Modules grid inside case block */
+  .case-section-title{
+    margin: 40px 0 18px;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--fg-mute);
+    display:flex; align-items:center; gap:14px;
+  }
+  .case-section-title::after{
+    content:""; flex:1; height:1px;
+    background:linear-gradient(90deg, var(--line), transparent);
+  }
+  .modules-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+  }
+  @media (max-width:780px){ .modules-grid{ grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:460px){ .modules-grid{ grid-template-columns:1fr;} }
+  .mod{
+    padding:16px 18px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:rgba(255,255,255,.015);
+    display:flex; align-items:flex-start; gap:12px;
+    transition:border-color .25s, transform .25s, background .25s;
+  }
+  .mod:hover{
+    border-color:rgba(26,169,255,.25);
+    background:rgba(26,169,255,.04);
+    transform:translateY(-1px);
+  }
+  .mod .ic{
+    width:32px; height:32px; border-radius:8px;
+    display:grid; place-items:center;
+    background: linear-gradient(135deg, rgba(7,121,228,.18), rgba(26,169,255,.06));
+    border:1px solid rgba(26,169,255,.18);
+    color:#9fd2ff;
+    flex-shrink:0;
+  }
+  .mod .ic svg{ width:14px; height:14px; }
+  .mod .name{
+    font-family:var(--display);
+    font-size:14px;
+    font-weight:500;
+    letter-spacing:-0.01em;
+    color:var(--fg);
+  }
+  .mod .sub{
+    font-family:var(--mono);
+    font-size:10px;
+    color:var(--fg-mute);
+    letter-spacing:.06em;
+    margin-top:2px;
+  }
+
+  .highlights-row{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-top:24px;
+  }
+  @media (max-width:780px){ .highlights-row{ grid-template-columns:1fr;} }
+  .hl{
+    padding:20px;
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:
+      linear-gradient(180deg, rgba(26,169,255,.04), transparent 60%),
+      rgba(255,255,255,.012);
+  }
+  .hl .hl-num{
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:.18em;
+    color:var(--electric);
+    margin-bottom:10px;
+  }
+  .hl h4{
+    font-family:var(--display);
+    font-size:16px;
+    letter-spacing:-0.01em;
+    margin: 0 0 8px;
+    color:var(--fg);
+  }
+  .hl p{ font-size:13.5px; line-height:1.55; color:var(--fg-dim); }
+
+  .case-result{
+    margin-top:32px;
+    padding:24px 28px;
+    border:1px solid rgba(26,169,255,.25);
+    border-radius:14px;
+    background: linear-gradient(135deg, rgba(7,121,228,.10), rgba(26,169,255,.02));
+    display:grid;
+    grid-template-columns:auto 1fr;
+    gap:20px;
+    align-items:center;
+  }
+  .case-result .badge{
+    font-family:var(--mono);
+    font-size:10.5px;
+    letter-spacing:.18em;
+    color:var(--electric);
+    text-transform:uppercase;
+    padding:6px 12px;
+    border:1px solid rgba(26,169,255,.3);
+    border-radius:999px;
+    background:rgba(26,169,255,.05);
+    white-space:nowrap;
+  }
+  .case-result p{
+    font-size:15px;
+    color:var(--fg);
+    line-height:1.55;
+  }
+  @media (max-width:640px){
+    .case-result{ grid-template-columns:1fr; }
+  }
+
+  body[data-accent="violet"]{ --royal:#6e5cff; --electric:#9c8bff; }
+
+  /* =========================================================
+     WHATSAPP FAB
+     ========================================================= */
+  .wa-fab{
+    position:fixed;
+    bottom:22px; left:22px;
+    z-index:90;
+    width:60px; height:60px;
+    border-radius:50%;
+    background: linear-gradient(135deg, #20bd5b 0%, #25d366 100%);
+    display:grid; place-items:center;
+    color:#fff;
+    text-decoration:none;
+    box-shadow:
+      0 14px 36px -8px rgba(37,211,102,.55),
+      0 0 0 0 rgba(37,211,102,.6);
+    transition: transform .25s cubic-bezier(.2,.7,.2,1), box-shadow .3s;
+    animation: wa-pulse 2.4s ease-out infinite;
+  }
+  .wa-fab:hover{
+    transform: translateY(-2px) scale(1.04);
+    box-shadow:
+      0 18px 40px -8px rgba(37,211,102,.7),
+      0 0 0 0 rgba(37,211,102,.6);
+  }
+  .wa-fab svg{ width:30px; height:30px; }
+  .wa-fab .wa-tip{
+    position:absolute;
+    left: calc(100% + 14px);
+    top:50%;
+    transform: translateY(-50%) translateX(-6px);
+    background: rgba(8,12,20,.96);
+    border:1px solid var(--line-strong);
+    color:var(--fg);
+    padding:9px 14px;
+    border-radius:10px;
+    font-family:var(--body);
+    font-size:13px;
+    font-weight:500;
+    white-space:nowrap;
+    opacity:0; pointer-events:none;
+    transition: opacity .25s, transform .25s;
+    box-shadow: 0 20px 50px -20px rgba(0,0,0,.7);
+  }
+  .wa-fab .wa-tip::before{
+    content:""; position:absolute;
+    left:-5px; top:50%; transform:translateY(-50%) rotate(45deg);
+    width:10px; height:10px;
+    background:rgba(8,12,20,.96);
+    border-left:1px solid var(--line-strong);
+    border-bottom:1px solid var(--line-strong);
+  }
+  .wa-fab .wa-tip small{
+    display:block;
+    font-family:var(--mono);
+    font-size:10.5px;
+    color:var(--fg-mute);
+    letter-spacing:.06em;
+    margin-top:2px;
+  }
+  .wa-fab:hover .wa-tip{
+    opacity:1;
+    transform: translateY(-50%) translateX(0);
+  }
+  @keyframes wa-pulse {
+    0%   { box-shadow: 0 14px 36px -8px rgba(37,211,102,.55), 0 0 0 0 rgba(37,211,102,.55); }
+    70%  { box-shadow: 0 14px 36px -8px rgba(37,211,102,.55), 0 0 0 18px rgba(37,211,102,0); }
+    100% { box-shadow: 0 14px 36px -8px rgba(37,211,102,.55), 0 0 0 0 rgba(37,211,102,0); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .wa-fab{ animation:none; }
+  }
+  @media (max-width:540px){
+    .wa-fab{ width:54px; height:54px; bottom:16px; left:16px; }
+    .wa-fab svg{ width:26px; height:26px; }
+    .wa-fab .wa-tip{ display:none; }
+  }
+
+  /* =========================================================
+     LANG SWITCH (navbar)
+     ========================================================= */
+  .lang-switch{
+    display:inline-flex;
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:3px;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.14em;
+  }
+  .lang-switch button{
+    background:transparent; border:0; color:var(--fg-mute);
+    padding:6px 11px; border-radius:999px;
+    cursor:pointer;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.14em;
+    transition: color .2s, background .25s;
+  }
+  .lang-switch button:hover{ color:var(--fg); }
+  .lang-switch button.on{
+    background:linear-gradient(135deg, rgba(7,121,228,.35), rgba(26,169,255,.22));
+    color:#fff;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.15);
+  }
+  @media (max-width: 880px){
+    .nav-cta .lang-switch{ display:none; }
+  }
+  .lang-switch.mobile{
+    margin-top:18px;
+    width:fit-content;
+    font-size:13px;
+  }
+  .lang-switch.mobile button{
+    padding:9px 18px;
+    font-size:13px;
+    letter-spacing:.08em;
+  }
+
+</style>
+</head>
+<body data-grid="medium" data-accent="royal">
+
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-dots" aria-hidden="true"></div>
+
+<!-- ================= NAV ================= -->
+<header class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#" class="brand" aria-label="Azaz Tech">
+      <span class="brand-mark"><img src="assets/azaz-logo.png" alt="" /></span>
+      <span class="brand-word">Azaz<span class="tech">Tech</span></span>
+    </a>
+    <nav class="nav-links" aria-label="principal">
+      <a href="#servicos" data-i18n="nav_services">Serviços</a>
+      <a href="#cases" data-i18n="nav_cases">Cases</a>
+      <a href="#diferenciais" data-i18n="nav_differentials">Diferenciais</a>
+      <a href="#processo" data-i18n="nav_process">Processo</a>
+      <a href="#contato" data-i18n="nav_contact">Contato</a>
+    </nav>
+    <div class="nav-cta">
+      <div class="lang-switch" role="tablist" aria-label="Language">
+        <button type="button" data-lang="pt" class="on" aria-label="Português">PT</button>
+        <button type="button" data-lang="en" aria-label="English">EN</button>
+      </div>
+      <a href="#contato" class="btn btn-primary btn-text">
+        <span data-i18n="nav_cta">Solicitar proposta</span>
+        <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<nav class="mobile-menu" id="mobileMenu" aria-label="mobile">
+  <a href="#servicos" data-i18n="nav_services">Serviços</a>
+  <a href="#cases" data-i18n="nav_cases">Cases</a>
+  <a href="#diferenciais" data-i18n="nav_differentials">Diferenciais</a>
+  <a href="#processo" data-i18n="nav_process">Processo</a>
+  <a href="#contato" data-i18n="nav_contact">Contato</a>
+  <div class="lang-switch mobile" role="tablist" aria-label="Language">
+    <button type="button" data-lang="pt" class="on">Português</button>
+    <button type="button" data-lang="en">English</button>
+  </div>
+  <a href="#contato" class="btn btn-primary" data-i18n="nav_cta">Solicitar proposta</a>
+</nav>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow" data-reveal data-i18n="hero_eyebrow">ENGENHARIA DE SOFTWARE • BRASIL</span>
+        <h1 data-reveal style="--rd:80ms"><span id="heroHeadline" data-i18n="hero_headline">Software sob medida para operações que <span class="accent">não podem parar.</span></span></h1>
+        <p class="hero-sub" data-reveal style="--rd:180ms" data-i18n="hero_sub">A Azaz Tech projeta, constrói e mantém sistemas web, ERPs e integrações para empresas que tratam tecnologia como infraestrutura crítica — com arquitetura sólida, entregas previsíveis e suporte de longo prazo.</p>
+        <div class="hero-cta" data-reveal style="--rd:260ms">
+          <a href="#contato" class="btn btn-primary">
+            <span data-i18n="hero_cta_primary">Conversar com engenharia</span>
+            <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+          <a href="#servicos" class="btn btn-ghost" data-i18n="hero_cta_secondary">Ver serviços</a>
+        </div>
+        <div class="hero-stats" data-reveal style="--rd:360ms">
+          <div class="stat">
+            <div class="num">8+</div>
+            <div class="lbl" data-i18n="stat_years">anos de operação</div>
+          </div>
+          <div class="stat">
+            <div class="num">120+</div>
+            <div class="lbl" data-i18n="stat_projects">projetos entregues</div>
+          </div>
+          <div class="stat">
+            <div class="num">99,98%</div>
+            <div class="lbl" data-i18n="stat_uptime">uptime médio</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual" data-reveal style="--rd:120ms" aria-hidden="true">
+        <div class="orbit"></div>
+        <div class="orbit o2"></div>
+        <div class="orbit o3"></div>
+        <div class="logo-float">
+          <img src="assets/azaz-logo.png" alt="Azaz Tech" />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STACK ================= -->
+<section class="stack-strip">
+  <div class="container">
+    <div class="lbl" data-i18n="stack_label">Stack de produção</div>
+    <div class="stack-list">
+      <span class="item"><svg viewBox="0 0 24 24" fill="none" stroke="#1AA9FF" stroke-width="1.6"><circle cx="12" cy="12" r="2"/><ellipse cx="12" cy="12" rx="11" ry="4.5"/><ellipse cx="12" cy="12" rx="11" ry="4.5" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="11" ry="4.5" transform="rotate(120 12 12)"/></svg>React · Next.js</span>
+      <span class="item"><svg viewBox="0 0 24 24" fill="#7be3a4"><path d="M12 2 3 6.5v11L12 22l9-4.5v-11L12 2zm0 2.2 6.6 3.3-6.6 3.3-6.6-3.3L12 4.2z"/></svg>Node.js</span>
+      <span class="item"><svg viewBox="0 0 24 24" fill="#ffb86c"><path d="M12 3c-4 0-4 1.5-4 1.5V7h4v.5H6S3 7.2 3 12s2.6 4.8 2.6 4.8H8v-2.5C8 12 9.5 12 9.5 12H14s2.5.1 2.5-2.5V4.5S17 3 12 3zm-2 1.5a1 1 0 110 2 1 1 0 010-2z"/></svg>Python</span>
+      <span class="item"><svg viewBox="0 0 24 24" fill="#9fd2ff"><path d="M12 2c5 0 9 1.5 9 4v12c0 2.5-4 4-9 4s-9-1.5-9-4V6c0-2.5 4-4 9-4zm0 2c-4.4 0-7 1.2-7 2s2.6 2 7 2 7-1.2 7-2-2.6-2-7-2z"/></svg>PostgreSQL</span>
+      <span class="item"><svg viewBox="0 0 24 24" fill="#ffb86c"><path d="M3 17l9-13 9 13H3zm9-9-5 7h10l-5-7z"/></svg>AWS</span>
+      <span class="item"><svg viewBox="0 0 24 24" fill="#1AA9FF"><path d="M2 12h4v4H2zm5 0h4v4H7zm5 0h4v4h-4zm5-5h4v4h-4zm-5 0h4v4h-4zm-5 0h4v4H7zm-5-5h4v4H2zm5 0h4v4H7zm5 0h4v4h-4z" opacity=".4"/><path d="M22 12s-1 6-6 6-4-2-9-2-5 2-5 2 2-3 7-3 6 1 8 1 5-4 5-4z"/></svg>Docker</span>
+      <span class="item"><svg viewBox="0 0 24 24" fill="none" stroke="#c98aff" stroke-width="1.8"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M7.5 7l3 9M16.5 7l-3 9"/></svg>CI/CD</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SERVICES ================= -->
+<section class="section" id="servicos">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow" data-i18n="services_eyebrow">O QUE CONSTRUÍMOS</span>
+      <h2 data-i18n="services_title">Engenharia aplicada ao seu negócio.</h2>
+      <p data-i18n="services_intro">Atendemos do MVP ao sistema crítico em produção — sempre com a mesma exigência de qualidade, documentação e responsabilidade pelo resultado.</p>
+    </div>
+
+    <div class="services-grid">
+
+      <article class="card" data-reveal style="--rd:60ms">
+        <div class="icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 18l6-6-6-6M8 6l-6 6 6 6M14 4l-4 16"/></svg>
+        </div>
+        <h3 data-i18n="svc1_t">Software sob medida</h3>
+        <p class="desc" data-i18n="svc1_d">Aplicações desenhadas para o seu modelo operacional — não adaptamos o seu negócio a um produto pronto.</p>
+        <div class="tags">
+          <span class="tag">React</span><span class="tag">TypeScript</span><span class="tag">Node</span><span class="tag">Postgres</span>
+        </div>
+      </article>
+
+      <article class="card" data-reveal style="--rd:120ms">
+        <div class="icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20M6 6.5h.01M9 6.5h.01"/></svg>
+        </div>
+        <h3 data-i18n="svc2_t">Sites & Web Apps</h3>
+        <p class="desc" data-i18n="svc2_d">Sites institucionais, portais e plataformas com performance, acessibilidade e SEO técnico cuidadosamente trabalhados.</p>
+        <div class="tags">
+          <span class="tag">Next.js</span><span class="tag">SSR</span><span class="tag">CMS Headless</span>
+        </div>
+      </article>
+
+      <article class="card" data-reveal style="--rd:180ms">
+        <div class="icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"/></svg>
+        </div>
+        <h3 data-i18n="svc3_t">Sistemas ERP</h3>
+        <p class="desc" data-i18n="svc3_d">Plataformas de gestão fim a fim — financeiro, fiscal, estoque, produção — com workflow desenhado para a sua operação.</p>
+        <div class="tags">
+          <span class="tag">Multi-tenant</span><span class="tag">RBAC</span><span class="tag">Fiscal BR</span>
+        </div>
+      </article>
+
+      <article class="card" data-reveal style="--rd:240ms">
+        <div class="icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007 0l3-3a5 5 0 00-7-7l-1 1"/><path d="M14 11a5 5 0 00-7 0l-3 3a5 5 0 007 7l1-1"/></svg>
+        </div>
+        <h3 data-i18n="svc4_t">Integrações &amp; APIs</h3>
+        <p class="desc" data-i18n="svc4_d">Conectamos sistemas legados, ERPs de mercado e gateways via REST, GraphQL e mensageria — com observabilidade desde o dia um.</p>
+        <div class="tags">
+          <span class="tag">REST</span><span class="tag">GraphQL</span><span class="tag">RabbitMQ</span><span class="tag">ORM</span>
+        </div>
+      </article>
+
+      <article class="card" data-reveal style="--rd:300ms">
+        <div class="icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10a6 6 0 00-12 0 4 4 0 00.5 8H17a4 4 0 001-7.9z"/></svg>
+        </div>
+        <h3 data-i18n="svc5_t">Cloud &amp; DevOps</h3>
+        <p class="desc" data-i18n="svc5_d">Infraestrutura como código, pipelines de CI/CD, observabilidade e segurança — entregamos ambiente reproduzível e auditável.</p>
+        <div class="tags">
+          <span class="tag">AWS</span><span class="tag">Docker</span><span class="tag">Terraform</span><span class="tag">GitHub Actions</span>
+        </div>
+      </article>
+
+      <article class="card" data-reveal style="--rd:360ms">
+        <div class="icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 00-5.4 5.4l-7 7 2 2 7-7a4 4 0 005.4-5.4l-2.5 2.5-2-2 2.5-2.5z"/></svg>
+        </div>
+        <h3 data-i18n="svc6_t">Manutenção &amp; Suporte</h3>
+        <p class="desc" data-i18n="svc6_d">Contratos de evolução contínua com SLA — atualizações de segurança, performance, novas features e plantão técnico.</p>
+        <div class="tags">
+          <span class="tag">SLA 24/7</span><span class="tag">Monitoria</span><span class="tag">Hotfix</span>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= DIFERENCIAIS ================= -->
+<section class="section" id="cases">
+  <div class="container">
+    <div class="cases-head" data-reveal>
+      <div>
+        <span class="eyebrow" data-i18n="cases_eyebrow">CASES EM PRODUÇÃO</span>
+        <h2 data-i18n="cases_title">Sistemas que sustentam operações reais.</h2>
+      </div>
+      <div class="meta" data-i18n="cases_meta">PORTUÁRIO / LOGÍSTICA</div>
+    </div>
+
+    <!-- ============== CASE 01 — CARGO STOCK ============== -->
+    <article class="case-block" data-reveal>
+      <header class="case-head">
+        <span class="case-num">/ CASE 01</span>
+        <div class="case-tags">
+          <span class="tag" data-i18n="c1_tag1">Web full-stack</span>
+          <span class="tag" data-i18n="c1_tag2">ERP interno</span>
+          <span class="tag" data-i18n="c1_tag3">Em produção</span>
+        </div>
+      </header>
+      <h3 class="case-title">Cargo Stock</h3>
+      <p class="case-tagline" data-i18n="c1_tagline">Gestão operacional fim a fim para empresa portuária — estoque, RH, equipamentos, navios, escalas, financeiro e WhatsApp em uma única plataforma, web e desktop.</p>
+
+      <div class="case-body">
+        <!-- Web dashboard mockup -->
+        <div class="case-mock" aria-hidden="true">
+          <div class="mock-chrome">
+            <div class="traffic"><span></span><span></span><span></span></div>
+            <div class="addr">cargo-stock.app / dashboard</div>
+            <div style="width:36px;"></div>
+          </div>
+          <div class="mock-body">
+            <aside class="mock-side">
+              <div class="si on"><span class="dot"></span>Dashboard</div>
+              <div class="si"><span class="dot"></span>Navios</div>
+              <div class="si"><span class="dot"></span>Escalação</div>
+              <div class="si"><span class="dot"></span>Estoque</div>
+              <div class="si"><span class="dot"></span>RH</div>
+              <div class="si"><span class="dot"></span>Equipamentos</div>
+              <div class="si"><span class="dot"></span>Financeiro</div>
+              <div class="si"><span class="dot"></span>Conversas</div>
+              <div class="si"><span class="dot"></span>Mensagens</div>
+            </aside>
+            <div class="mock-main">
+              <div class="mock-kpis">
+                <div class="mock-kpi"><div class="v">12</div><div class="k">navios ativos</div></div>
+                <div class="mock-kpi"><div class="v">348</div><div class="k">escalas/mê</div></div>
+                <div class="mock-kpi"><div class="v">99,8<sup style="font-size:.5em;">%</sup></div><div class="k">uptime</div></div>
+              </div>
+              <div class="mock-table">
+                <div class="row head"><span>Navio</span><span>Turno</span><span>Status</span></div>
+                <div class="row"><span>MV Santos Star</span><span>07‑13</span><span class="mock-pill op">EM OPER</span></div>
+                <div class="row"><span>MV Atlantic Hope</span><span>13‑19</span><span class="mock-pill wait">AGUARD</span></div>
+                <div class="row"><span>MV Iberian Coal</span><span>19‑01</span><span class="mock-pill op">EM OPER</span></div>
+                <div class="row"><span>MV Cape Aurelia</span><span>01‑07</span><span class="mock-pill done">CONC</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Aside: description + stack + metrics -->
+        <div class="case-aside">
+          <h4 data-i18n="c1_h_about">O Sistema</h4>
+          <p class="desc" data-i18n="c1_desc">Substituiu múltiplas planilhas e grupos de WhatsApp descoordenados por um sistema único. Controla turnos de costado, equipes de embarque, EPIs entregues, equipamentos emprestados e fechamento financeiro por trabalho — com integração nativa ao WhatsApp e rastreio de navios em tempo real.</p>
+
+          <h4 data-i18n="c1_h_stack">Stack</h4>
+          <div class="case-stack">
+            <span class="tag">Next.js 15</span>
+            <span class="tag">React 19</span>
+            <span class="tag">TypeScript</span>
+            <span class="tag">Tailwind v4</span>
+            <span class="tag">Prisma 6.9</span>
+            <span class="tag">PostgreSQL</span>
+            <span class="tag">NextAuth v5</span>
+            <span class="tag">Electron 33</span>
+            <span class="tag">Evolution API</span>
+            <span class="tag">AIS Stream</span>
+            <span class="tag">Railway</span>
+          </div>
+
+          <h4 data-i18n="c1_h_metrics">Números</h4>
+          <div class="case-metrics">
+            <div class="m"><div class="v">11</div><div class="k" data-i18n="c1_m1">módulos de negócio</div></div>
+            <div class="m"><div class="v">20+</div><div class="k" data-i18n="c1_m2">tabelas Prisma</div></div>
+            <div class="m"><div class="v">6×11×10</div><div class="k" data-i18n="c1_m3">matriz RBAC</div></div>
+            <div class="m"><div class="v">Web+Desktop</div><div class="k" data-i18n="c1_m4">mesma base de código</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modules grid -->
+      <div class="case-section-title" data-i18n="c1_modules">Módulos principais</div>
+      <div class="modules-grid">
+        <div class="mod">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg></div>
+          <div><div class="name">Dashboard</div><div class="sub" data-i18n="c1_mod_dash">Métricas &middot; logs de acesso</div></div>
+        </div>
+        <div class="mod">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M2 20s2-2 5-2 4 2 7 2 4-2 6-2 2 2 2 2M3 14l9-9 9 9M5 14v7M19 14v7M9 10v4M15 10v4M12 7v7"/></svg></div>
+          <div><div class="name">Navios</div><div class="sub" data-i18n="c1_mod_ships">Operações &middot; grupo WhatsApp</div></div>
+        </div>
+        <div class="mod">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+          <div><div class="name">Escalação</div><div class="sub" data-i18n="c1_mod_scale">4 turnos de costado</div></div>
+        </div>
+        <div class="mod">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 00-1-1.7l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.7l7 4a2 2 0 002 0l7-4A2 2 0 0021 16zM3.3 7L12 12l8.7-5M12 22V12"/></svg></div>
+          <div><div class="name">Estoque</div><div class="sub" data-i18n="c1_mod_stock">Itens &middot; movimentações</div></div>
+        </div>
+        <div class="mod">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+          <div><div class="name">RH</div><div class="sub" data-i18n="c1_mod_hr">Colaboradores &middot; EPIs &middot; NR</div></div>
+        </div>
+        <div class="mod">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+          <div><div class="name">Financeiro</div><div class="sub" data-i18n="c1_mod_fin">Fechamento &middot; rateio</div></div>
+        </div>
+        <div class="mod">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M21 11.5a8.4 8.4 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.4 8.4 0 01-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.4 8.4 0 013.8-.9h.5a8.5 8.5 0 018 8z"/></svg></div>
+          <div><div class="name">Conversas</div><div class="sub" data-i18n="c1_mod_chat">Inbox WhatsApp</div></div>
+        </div>
+        <div class="mod">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14.7 6.3a4 4 0 00-5.4 5.4l-7 7 2 2 7-7a4 4 0 005.4-5.4l-2.5 2.5-2-2 2.5-2.5z"/></svg></div>
+          <div><div class="name">Equipamentos</div><div class="sub" data-i18n="c1_mod_tools">Empréstimo &middot; manutenção</div></div>
+        </div>
+        <div class="mod">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 3h18v4H3zM3 10h18v4H3zM3 17h18v4H3z"/></svg></div>
+          <div><div class="name" data-i18n="c1_mod_req_t">Solicitações</div><div class="sub" data-i18n="c1_mod_req_d">Fornecedores &middot; pedidos</div></div>
+        </div>
+      </div>
+
+      <!-- Highlights -->
+      <div class="case-section-title" data-i18n="c1_highlights">Destaques arquiteturais</div>
+      <div class="highlights-row">
+        <div class="hl">
+          <div class="hl-num">01</div>
+          <h4 data-i18n="c1_hl1_t">WhatsApp bidirecional</h4>
+          <p data-i18n="c1_hl1_d">Webhook + envio via Evolution API, persistência completa de mensagens e disparo automático ao grupo do navio quando uma escala é fechada.</p>
+        </div>
+        <div class="hl">
+          <div class="hl-num">02</div>
+          <h4 data-i18n="c1_hl2_t">Fechamento com rateio</h4>
+          <p data-i18n="c1_hl2_d">Quando falta gente no turno, o valor da função ausente é redistribuído automaticamente entre quem trabalhou — com ajustes categorizados auditados.</p>
+        </div>
+        <div class="hl">
+          <div class="hl-num">03</div>
+          <h4 data-i18n="c1_hl3_t">Híbrido web + desktop</h4>
+          <p data-i18n="c1_hl3_d">Mesma base de código Next.js empacotada em Electron para build .exe Windows, com PWA e auto-deploy via Railway.</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- ============== CASE 02 — YUTA ============== -->
+    <article class="case-block" data-reveal>
+      <header class="case-head">
+        <span class="case-num">/ CASE 02</span>
+        <div class="case-tags">
+          <span class="tag" data-i18n="c2_tag1">Desktop Python</span>
+          <span class="tag" data-i18n="c2_tag2">Automação fiscal</span>
+          <span class="tag" data-i18n="c2_tag3">SANPORT</span>
+        </div>
+      </header>
+      <h3 class="case-title">Yuta — <span style="color:var(--fg-mute);font-weight:500;" data-i18n="c2_subtitle">Hub de Automação Portuária</span></h3>
+      <p class="case-tagline" data-i18n="c2_tagline">Aplicação desktop em Python/PyQt6 que automatiza o ciclo operacional e financeiro completo de navios no Porto de Santos — com emissão de NFS-e direto via SOAP + certificado A1.</p>
+
+      <div class="case-body">
+        <!-- Desktop window mockup -->
+        <div class="case-mock" aria-hidden="true">
+          <div class="mock-chrome win">
+            <div style="display:flex;align-items:center;gap:8px;color:var(--fg);font-family:var(--mono);font-size:11px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="#1AA9FF"><path d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM13 13h8v8h-8z"/></svg>
+              Yuta — Faturamento
+            </div>
+            <div style="flex:1;"></div>
+            <div class="winctl"><span>−</span><span>□</span><span>×</span></div>
+          </div>
+          <div class="mock-body">
+            <aside class="mock-side">
+              <div class="si"><span class="dot"></span>Navios</div>
+              <div class="si on"><span class="dot"></span>Faturamento</div>
+              <div class="si"><span class="dot"></span>NFS-e GISS</div>
+              <div class="si"><span class="dot"></span>Clientes</div>
+              <div class="si"><span class="dot"></span>Relatórios</div>
+              <div class="si"><span class="dot"></span>Outlook</div>
+              <div class="si"><span class="dot"></span>Config</div>
+            </aside>
+            <div class="mock-main">
+              <div class="mock-form">
+                <div class="field"><span class="l">Cliente</span><span class="v">SANPORT LOGÍSTICA</span></div>
+                <div class="field"><span class="l">Período</span><span class="v">11 / 2025</span></div>
+                <div class="field"><span class="l">Modalidade</span><span class="v">ADM + ISS + MMO</span></div>
+              </div>
+              <div class="mock-totals">
+                <div class="t"><span>Base</span><b>R$ 184.520,00</b></div>
+                <div class="t"><span>ADM</span><b>R$ 18.452,00</b></div>
+                <div class="t"><span>ISS</span><b>R$ 9.226,00</b></div>
+                <div class="t"><span>MMO</span><b>R$ 12.916,40</b></div>
+                <div class="t" style="grid-column:1/-1;border-top:1px solid rgba(26,169,255,.2);padding-top:8px;"><span>Total</span><b style="color:#1AA9FF;">R$ 225.114,40</b></div>
+              </div>
+              <div class="mock-emit">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg>
+                Emitir NFS-e no GISS
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="case-aside">
+          <h4 data-i18n="c2_h_about">O Sistema</h4>
+          <p class="desc" data-i18n="c2_desc">Substituiu planilhas manuais por um fluxo integrado: controle de navios, faturamento com cálculos automáticos por modalidade (ADM/ISS/MMO), emissão de NFS-e via SOAP/mTLS no GISS Online, integração com Outlook para rascunho de e-mails e dashboards com agregações em tempo real.</p>
+
+          <h4 data-i18n="c2_h_stack">Stack</h4>
+          <div class="case-stack">
+            <span class="tag">Python</span>
+            <span class="tag">PyQt6</span>
+            <span class="tag">SQLite</span>
+            <span class="tag">xlwings</span>
+            <span class="tag">pypdf</span>
+            <span class="tag">Tesseract OCR</span>
+            <span class="tag">SOAP / mTLS A1</span>
+            <span class="tag">OAuth2 / JWT</span>
+            <span class="tag">comtypes (Outlook)</span>
+            <span class="tag">PyInstaller</span>
+          </div>
+
+          <h4 data-i18n="c2_h_metrics">Números</h4>
+          <div class="case-metrics">
+            <div class="m"><div class="v">~4.700</div><div class="k" data-i18n="c2_m1">linhas de helpers</div></div>
+            <div class="m"><div class="v">15+</div><div class="k" data-i18n="c2_m2">módulos de negócio</div></div>
+            <div class="m"><div class="v">25+</div><div class="k" data-i18n="c2_m3">clientes parametrizados</div></div>
+            <div class="m"><div class="v">4</div><div class="k" data-i18n="c2_m4">modalidades de faturamento</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Features grid -->
+      <div class="case-section-title" data-i18n="c2_features">Funcionalidades-chave</div>
+      <div class="modules-grid">
+        <div class="mod">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M2 20s2-2 5-2 4 2 7 2 4-2 6-2 2 2 2 2M3 14l9-9 9 9"/></svg></div>
+          <div><div class="name" data-i18n="c2_f1_t">Controle de navios</div><div class="sub" data-i18n="c2_f1_d">Entrada / saída &middot; status visual</div></div>
+        </div>
+        <div class="mod">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+          <div><div class="name" data-i18n="c2_f2_t">Faturamento automático</div><div class="sub" data-i18n="c2_f2_d">4 modalidades</div></div>
+        </div>
+        <div class="mod">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6v6H9z"/></svg></div>
+          <div><div class="name" data-i18n="c2_f3_t">Emissão NFS-e</div><div class="sub" data-i18n="c2_f3_d">SOAP + mTLS &middot; GISS Online</div></div>
+        </div>
+        <div class="mod">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M12 1v6M12 17v6M4.2 4.2l4.3 4.3M15.5 15.5l4.3 4.3M1 12h6M17 12h6M4.2 19.8l4.3-4.3M15.5 8.5l4.3-4.3"/></svg></div>
+          <div><div class="name" data-i18n="c2_f4_t">Cálculos por cliente</div><div class="sub" data-i18n="c2_f4_d">ADM &middot; ISS &middot; MMO</div></div>
+        </div>
+        <div class="mod">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg></div>
+          <div><div class="name" data-i18n="c2_f5_t">PDFs + Outlook</div><div class="sub" data-i18n="c2_f5_d">Rascunhos via COM</div></div>
+        </div>
+        <div class="mod">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 3v18h18M7 14l4-4 4 4 5-5"/></svg></div>
+          <div><div class="name" data-i18n="c2_f6_t">Dashboards</div><div class="sub" data-i18n="c2_f6_d">Agregações em tempo real</div></div>
+        </div>
+      </div>
+
+      <div class="case-result">
+        <span class="badge" data-i18n="c2_result_b">RESULTADO</span>
+        <p data-i18n="c2_result_t">Reduziu o tempo de geração de um faturamento completo de <b>horas para minutos</b>, com auditoria completa de envios fiscais ao GISS Online.</p>
+      </div>
+    </article>
+
+    <div style="text-align:center;margin-top:48px;" data-reveal>
+      <a href="#contato" class="btn btn-primary">
+        <span data-i18n="cases_cta">Quero um projeto como esse</span>
+        <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DIFERENCIAIS ================= -->
+<section class="section" id="diferenciais">
+  <div class="container">
+    <div class="why">
+      <div data-reveal>
+        <span class="eyebrow" data-i18n="why_eyebrow">POR QUE AZAZ TECH</span>
+        <h2 style="margin-top:18px;background:linear-gradient(180deg,#fff,#b7c2d2);-webkit-background-clip:text;background-clip:text;color:transparent;" data-i18n="why_title">Engenharia séria, sem ruído.</h2>
+        <p style="margin-top:18px;max-width:520px;" data-i18n="why_intro">Trabalhamos com práticas que reduzem risco e custo total de propriedade — do primeiro commit ao décimo ano de operação.</p>
+
+        <div class="why-list" style="margin-top:40px;">
+          <div class="why-item">
+            <div class="num"></div>
+            <div>
+              <h3 data-i18n="why1_t">Código limpo e testado</h3>
+              <p data-i18n="why1_d">Padrões de revisão, cobertura mínima de testes e CI bloqueando regressões antes do deploy.</p>
+            </div>
+          </div>
+          <div class="why-item">
+            <div class="num"></div>
+            <div>
+              <h3 data-i18n="why2_t">Arquitetura para escalar</h3>
+              <p data-i18n="why2_d">Decisões de arquitetura documentadas (ADRs), camadas bem definidas e desacoplamento que sustenta crescimento.</p>
+            </div>
+          </div>
+          <div class="why-item">
+            <div class="num"></div>
+            <div>
+              <h3 data-i18n="why3_t">Entregas previsíveis</h3>
+              <p data-i18n="why3_d">Ciclos curtos, escopo controlado e métricas de delivery transparentes em todas as reuniões de status.</p>
+            </div>
+          </div>
+          <div class="why-item">
+            <div class="num"></div>
+            <div>
+              <h3 data-i18n="why4_t">Segurança por padrão</h3>
+              <p data-i18n="why4_d">Boas práticas OWASP, gestão de segredos, auditoria de dependências e conformidade com LGPD.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-window" data-reveal style="--rd:120ms" aria-hidden="true">
+        <div class="code-head">
+          <div class="traffic"><span></span><span></span><span></span></div>
+          <div class="code-tab">azaz-tech / api / orders.service.ts</div>
+        </div>
+<pre class="code-body"><span class="ln">01</span> <span class="c-com">// pipeline de pedidos — tolerante a falhas</span>
+<span class="ln">02</span> <span class="c-key">import</span> { <span class="c-typ">Order</span>, <span class="c-typ">Result</span> } <span class="c-key">from</span> <span class="c-str">"@/core"</span>;
+<span class="ln">03</span>
+<span class="ln">04</span> <span class="c-key">export async function</span> <span class="c-fn">place</span>(input: <span class="c-typ">OrderInput</span>): <span class="c-typ">Result</span>&lt;<span class="c-typ">Order</span>&gt; {
+<span class="ln">05</span>   <span class="c-key">const</span> tx = <span class="c-key">await</span> <span class="c-fn">db</span>.<span class="c-fn">begin</span>();
+<span class="ln">06</span>   <span class="c-key">try</span> {
+<span class="ln">07</span>     <span class="c-key">const</span> order = <span class="c-key">await</span> <span class="c-fn">repo</span>.<span class="c-fn">create</span>(input, tx);
+<span class="ln">08</span>     <span class="c-key">await</span> <span class="c-fn">inventory</span>.<span class="c-fn">reserve</span>(order, tx);
+<span class="ln">09</span>     <span class="c-key">await</span> <span class="c-fn">events</span>.<span class="c-fn">emit</span>(<span class="c-str">"order.placed"</span>, order);
+<span class="ln">10</span>     <span class="c-key">await</span> tx.<span class="c-fn">commit</span>();
+<span class="ln">11</span>     <span class="c-key">return</span> { ok: <span class="c-num">true</span>, value: order };
+<span class="ln">12</span>   } <span class="c-key">catch</span> (err) {
+<span class="ln">13</span>     <span class="c-key">await</span> tx.<span class="c-fn">rollback</span>();
+<span class="ln">14</span>     <span class="c-fn">log</span>.<span class="c-fn">error</span>({ err, input }, <span class="c-str">"order failed"</span>);
+<span class="ln">15</span>     <span class="c-key">return</span> { ok: <span class="c-num">false</span>, error: err };
+<span class="ln">16</span>   }
+<span class="ln">17</span> }
+</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROCESS ================= -->
+<section class="section" id="processo">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <span class="eyebrow" data-i18n="process_eyebrow">COMO TRABALHAMOS</span>
+      <h2 data-i18n="process_title">Um processo claro, do primeiro briefing à evolução em produção.</h2>
+    </div>
+
+    <div class="process">
+      <div class="step" data-reveal style="--rd:60ms">
+        <div class="node">01</div>
+        <h3 data-i18n="step1_t">Descoberta</h3>
+        <p data-i18n="step1_d">Imersão no negócio, mapeamento de processos e definição de escopo realista.</p>
+      </div>
+      <div class="step" data-reveal style="--rd:140ms">
+        <div class="node">02</div>
+        <h3 data-i18n="step2_t">Arquitetura</h3>
+        <p data-i18n="step2_d">Decisões técnicas documentadas, riscos endereçados e cronograma validado.</p>
+      </div>
+      <div class="step" data-reveal style="--rd:220ms">
+        <div class="node">03</div>
+        <h3 data-i18n="step3_t">Desenvolvimento</h3>
+        <p data-i18n="step3_d">Sprints curtas, revisões frequentes e entregas incrementais em homologação.</p>
+      </div>
+      <div class="step" data-reveal style="--rd:300ms">
+        <div class="node">04</div>
+        <h3 data-i18n="step4_t">Entrega &amp; Evolução</h3>
+        <p data-i18n="step4_d">Go-live monitorado e parceria contínua para evolução do produto em produção.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= METRICS ================= -->
+<section class="metrics">
+  <div class="container">
+    <div class="metrics-grid">
+      <div class="metric" data-reveal style="--rd:0ms">
+        <div class="v">99,98<sup>%</sup></div>
+        <div class="k" data-i18n="m_uptime">uptime médio</div>
+      </div>
+      <div class="metric" data-reveal style="--rd:80ms">
+        <div class="v">8+</div>
+        <div class="k" data-i18n="m_years">anos de operação</div>
+      </div>
+      <div class="metric" data-reveal style="--rd:160ms">
+        <div class="v">120<sup>+</sup></div>
+        <div class="k" data-i18n="m_projects">projetos entregues</div>
+      </div>
+      <div class="metric" data-reveal style="--rd:240ms">
+        <div class="v">24/7</div>
+        <div class="k" data-i18n="m_support">plantão técnico</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONTACT ================= -->
+<section class="section" id="contato">
+  <div class="container">
+    <div class="contact">
+      <div class="contact-info" data-reveal>
+        <span class="eyebrow" data-i18n="contact_eyebrow">VAMOS CONVERSAR</span>
+        <h2 style="margin-top:18px;" data-i18n="contact_title">Conte sobre o seu projeto.</h2>
+        <p style="margin-top:18px;max-width:480px;" data-i18n="contact_intro">Respondemos em até 1 dia útil com uma análise inicial e propostas de próximos passos. Sem formulários intermináveis — direto ao ponto.</p>
+
+        <div class="info-list">
+          <div class="info-row">
+            <div class="ic">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7l9 6 9-6"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
+            </div>
+            <div><span class="lbl" data-i18n="info_email">E-mail comercial</span><span class="val">azaztech.suporte@gmail.com</span></div>
+          </div>
+          <div class="info-row">
+            <div class="ic">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.7.6 2.5a2 2 0 01-.5 2.1L8 9.6a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.5c.8.3 1.6.5 2.5.6A2 2 0 0122 16.9z"/></svg>
+            </div>
+            <div><span class="lbl" data-i18n="info_phone">Telefone &amp; WhatsApp</span><span class="val"><a href="https://wa.me/5513996744755" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;">+55 (13) 99674‑4755</a></span></div>
+          </div>
+          <div class="info-row">
+            <div class="ic">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div><span class="lbl" data-i18n="info_address">Sede</span><span class="val" data-i18n="info_address_v">São Paulo, SP — atendimento remoto em todo o Brasil</span></div>
+          </div>
+        </div>
+      </div>
+
+      <form class="form" data-reveal style="--rd:120ms" onsubmit="return handleSubmit(event)">
+        <div class="form-row two">
+          <div>
+            <label for="f-nome" data-i18n="f_name">Nome</label>
+            <input id="f-nome" type="text" required placeholder="Seu nome" data-i18n-ph="f_name_p" />
+          </div>
+          <div>
+            <label for="f-email" data-i18n="f_email">E-mail corporativo</label>
+            <input id="f-email" type="email" required placeholder="voce@empresa.com.br" data-i18n-ph="f_email_p" />
+          </div>
+        </div>
+        <div class="form-row two">
+          <div>
+            <label for="f-empresa" data-i18n="f_company">Empresa</label>
+            <input id="f-empresa" type="text" required placeholder="Razão social ou nome" data-i18n-ph="f_company_p" />
+          </div>
+          <div>
+            <label for="f-tipo" data-i18n="f_type">Tipo de projeto</label>
+            <select id="f-tipo" required>
+              <option value="" data-i18n="f_type_p">Selecione...</option>
+              <option data-i18n="f_t1">Software sob medida</option>
+              <option data-i18n="f_t2">Site ou Web App</option>
+              <option data-i18n="f_t3">Sistema ERP</option>
+              <option data-i18n="f_t4">Integração / API</option>
+              <option data-i18n="f_t5">Cloud &amp; DevOps</option>
+              <option data-i18n="f_t6">Manutenção / Suporte</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="f-msg" data-i18n="f_msg">Mensagem</label>
+          <textarea id="f-msg" rows="4" required placeholder="Conte brevemente o contexto, prazos e o que você precisa resolver." data-i18n-ph="f_msg_p"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">
+          <span data-i18n="f_submit">Enviar mensagem</span>
+          <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+        <div class="privacy" data-i18n="f_privacy">Seus dados são tratados conforme a LGPD.</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href="#" class="brand">
+          <span class="brand-mark"><img src="assets/azaz-logo.png" alt="" /></span>
+          <span class="brand-word">Azaz<span class="tech">Tech</span></span>
+        </a>
+        <p data-i18n="foot_about">Engenharia de software brasileira para operações que tratam tecnologia como infraestrutura crítica.</p>
+      </div>
+      <div class="foot-col">
+        <h4 data-i18n="foot_col_services">Serviços</h4>
+        <ul>
+          <li><a href="#servicos" data-i18n="svc1_t">Software sob medida</a></li>
+          <li><a href="#servicos" data-i18n="svc3_t">Sistemas ERP</a></li>
+          <li><a href="#servicos" data-i18n="svc4_t">Integrações &amp; APIs</a></li>
+          <li><a href="#servicos" data-i18n="svc5_t">Cloud &amp; DevOps</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4 data-i18n="foot_col_company">Empresa</h4>
+        <ul>
+          <li><a href="#diferenciais" data-i18n="nav_differentials">Diferenciais</a></li>
+          <li><a href="#processo" data-i18n="nav_process">Processo</a></li>
+          <li><a href="#contato" data-i18n="nav_contact">Contato</a></li>
+          <li><a href="#" data-i18n="foot_link_careers">Carreiras</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4 data-i18n="foot_col_contact">Contato</h4>
+        <ul>
+          <li><a href="mailto:azaztech.suporte@gmail.com">azaztech.suporte@gmail.com</a></li>
+          <li><a href="https://wa.me/5513996744755" target="_blank" rel="noopener">+55 (13) 99674‑4755</a></li>
+          <li><a href="#" data-i18n="info_address_v_short">São Paulo, SP</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div data-i18n="foot_copy">© 2026 Azaz Tech · CNPJ 65.555.092 · Todos os direitos reservados</div>
+      <div class="socials" aria-label="Redes sociais">
+        <a href="https://www.linkedin.com/in/guilherme-lopes-275971306/" target="_blank" rel="noopener" aria-label="LinkedIn"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 11-.01 5.01 2.5 2.5 0 01.01-5.01zM3 9h4v12H3zM10 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05 4.04 0 4.78 2.66 4.78 6.12V21h-4v-5.4c0-1.29-.02-2.95-1.8-2.95s-2.08 1.4-2.08 2.85V21h-4z"/></svg></a>
+        <a href="https://github.com/Zarogmer" target="_blank" rel="noopener" aria-label="GitHub"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5a11.5 11.5 0 00-3.64 22.42c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.4-3.88-1.4-.52-1.34-1.28-1.7-1.28-1.7-1.04-.72.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.76 2.68 1.25 3.34.96.1-.74.4-1.25.72-1.54-2.55-.3-5.24-1.28-5.24-5.7 0-1.26.45-2.3 1.2-3.1-.12-.3-.52-1.48.1-3.1 0 0 .97-.31 3.18 1.18a11 11 0 015.78 0c2.2-1.5 3.18-1.18 3.18-1.18.62 1.62.22 2.8.1 3.1.75.8 1.2 1.84 1.2 3.1 0 4.43-2.7 5.4-5.25 5.69.42.36.78 1.05.78 2.12v3.14c0 .31.2.67.8.56A11.5 11.5 0 0012 .5z"/></svg></a>
+        <a href="https://www.instagram.com/guilherm3lopes/" target="_blank" rel="noopener" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ================= WHATSAPP FAB ================= -->
+<a class="wa-fab"
+   href="https://wa.me/5513996744755?text=Ol%C3%A1%21%20Vim%20pelo%20site%20da%20Azaz%20Tech%20e%20gostaria%20de%20conversar%20sobre%20um%20projeto."
+   target="_blank" rel="noopener"
+   aria-label="Conversar no WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M17.5 14.4c-.3-.1-1.8-.9-2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7.1c-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.2.3-.4.4-.6.1-.2.2-.3.3-.5.1-.2.1-.4 0-.5 0-.1-.7-1.6-.9-2.2-.2-.6-.4-.5-.6-.5h-.5c-.2 0-.5.1-.7.4-.2.3-.9.9-.9 2.3 0 1.3.9 2.6 1.1 2.8.1.2 1.9 2.9 4.6 4 .6.3 1.1.5 1.5.6.6.2 1.2.2 1.6.1.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.2-1.2-.1-.2-.3-.2-.6-.4zm-5.6 8.1c-1.7 0-3.4-.5-4.9-1.4l-3.5.9.9-3.4c-1-1.5-1.5-3.3-1.5-5.2 0-5.4 4.4-9.8 9.8-9.8 2.6 0 5.1 1 6.9 2.9 1.8 1.8 2.9 4.3 2.9 6.9 0 5.4-4.4 9.8-9.8 9.8zm0-21.5C5.7 1 .4 6.3.4 12.7c0 2 .5 4 1.5 5.7L0 24l5.7-1.5c1.7.9 3.6 1.4 5.5 1.4 6.4 0 11.7-5.2 11.7-11.7C23 6.3 17.7 1 11.4 1z"/>
+  </svg>
+  <span class="wa-tip">
+    <span data-i18n="wa_tip">Conversar no WhatsApp</span>
+    <small>+55 (13) 99674‑4755</small>
+  </span>
+</a>
+
+<!-- ================= TWEAKS ================= -->
+<div id="tweaks" role="dialog" aria-label="Tweaks">
+  <div class="head">
+    <h4 data-i18n="tw_title">Tweaks</h4>
+    <button id="tweaksClose" aria-label="Fechar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <div class="tw-row">
+    <span class="tw-lbl" data-i18n="tw_lang">Idioma</span>
+    <div class="seg" data-tweak="lang">
+      <button data-v="pt">PT</button>
+      <button data-v="en">EN</button>
+    </div>
+  </div>
+
+  <div class="tw-row">
+    <span class="tw-lbl" data-i18n="tw_accent">Acento</span>
+    <div class="seg" data-tweak="accentMode">
+      <button data-v="royal">Royal</button>
+      <button data-v="cyan">Cyan</button>
+      <button data-v="violet">Violet</button>
+    </div>
+  </div>
+
+  <div class="tw-row">
+    <span class="tw-lbl" data-i18n="tw_grid">Grid de fundo</span>
+    <div class="seg" data-tweak="gridDensity">
+      <button data-v="light" data-i18n="tw_grid_light">Sutil</button>
+      <button data-v="medium" data-i18n="tw_grid_medium">Médio</button>
+      <button data-v="dense" data-i18n="tw_grid_dense">Denso</button>
+    </div>
+  </div>
+
+  <div class="tw-row">
+    <span class="tw-lbl" data-i18n="tw_headline">Headline</span>
+    <input type="text" id="tw-headline" placeholder="Headline do hero" data-i18n-ph="tw_headline_ph" />
+  </div>
+</div>
+
+<script>
+(function(){
+  // ===== I18N DICTIONARY =====
+  const I18N = {
+    pt: {
+      nav_services:'Serviços', nav_cases:'Cases', nav_differentials:'Diferenciais', nav_process:'Processo', nav_contact:'Contato',
+      nav_cta:'Solicitar proposta',
+
+      hero_eyebrow:'ENGENHARIA DE SOFTWARE • BRASIL',
+      hero_headline:'Software sob medida para operações que <span class="accent">não podem parar.</span>',
+      hero_sub:'A Azaz Tech projeta, constrói e mantém sistemas web, ERPs e integrações para empresas que tratam tecnologia como infraestrutura crítica — com arquitetura sólida, entregas previsíveis e suporte de longo prazo.',
+      hero_cta_primary:'Conversar com engenharia',
+      hero_cta_secondary:'Ver serviços',
+      stat_years:'anos de operação', stat_projects:'projetos entregues', stat_uptime:'uptime médio',
+
+      stack_label:'Stack de produção',
+
+      services_eyebrow:'O QUE CONSTRUÍMOS',
+      services_title:'Engenharia aplicada ao seu negócio.',
+      services_intro:'Atendemos do MVP ao sistema crítico em produção — sempre com a mesma exigência de qualidade, documentação e responsabilidade pelo resultado.',
+      svc1_t:'Software sob medida',
+      svc1_d:'Aplicações desenhadas para o seu modelo operacional — não adaptamos o seu negócio a um produto pronto.',
+      svc2_t:'Sites &amp; Web Apps',
+      svc2_d:'Sites institucionais, portais e plataformas com performance, acessibilidade e SEO técnico cuidadosamente trabalhados.',
+      svc3_t:'Sistemas ERP',
+      svc3_d:'Plataformas de gestão fim a fim — financeiro, fiscal, estoque, produção — com workflow desenhado para a sua operação.',
+      svc4_t:'Integrações &amp; APIs',
+      svc4_d:'Conectamos sistemas legados, ERPs de mercado e gateways via REST, GraphQL e mensageria — com observabilidade desde o dia um.',
+      svc5_t:'Cloud &amp; DevOps',
+      svc5_d:'Infraestrutura como código, pipelines de CI/CD, observabilidade e segurança — entregamos ambiente reproduzível e auditável.',
+      svc6_t:'Manutenção &amp; Suporte',
+      svc6_d:'Contratos de evolução contínua com SLA — atualizações de segurança, performance, novas features e plantão técnico.',
+
+      why_eyebrow:'POR QUE AZAZ TECH',
+      why_title:'Engenharia séria, sem ruído.',
+      why_intro:'Trabalhamos com práticas que reduzem risco e custo total de propriedade — do primeiro commit ao décimo ano de operação.',
+      why1_t:'Código limpo e testado',
+      why1_d:'Padrões de revisão, cobertura mínima de testes e CI bloqueando regressões antes do deploy.',
+      why2_t:'Arquitetura para escalar',
+      why2_d:'Decisões de arquitetura documentadas (ADRs), camadas bem definidas e desacoplamento que sustenta crescimento.',
+      why3_t:'Entregas previsíveis',
+      why3_d:'Ciclos curtos, escopo controlado e métricas de delivery transparentes em todas as reuniões de status.',
+      why4_t:'Segurança por padrão',
+      why4_d:'Boas práticas OWASP, gestão de segredos, auditoria de dependências e conformidade com LGPD.',
+
+      process_eyebrow:'COMO TRABALHAMOS',
+      process_title:'Um processo claro, do primeiro briefing à evolução em produção.',
+      step1_t:'Descoberta',
+      step1_d:'Imersão no negócio, mapeamento de processos e definição de escopo realista.',
+      step2_t:'Arquitetura',
+      step2_d:'Decisões técnicas documentadas, riscos endereçados e cronograma validado.',
+      step3_t:'Desenvolvimento',
+      step3_d:'Sprints curtas, revisões frequentes e entregas incrementais em homologação.',
+      step4_t:'Entrega &amp; Evolução',
+      step4_d:'Go-live monitorado e parceria contínua para evolução do produto em produção.',
+
+      m_uptime:'uptime médio', m_years:'anos de operação', m_projects:'projetos entregues', m_support:'plantão técnico',
+
+      contact_eyebrow:'VAMOS CONVERSAR',
+      contact_title:'Conte sobre o seu projeto.',
+      contact_intro:'Respondemos em até 1 dia útil com uma análise inicial e propostas de próximos passos. Sem formulários intermináveis — direto ao ponto.',
+      info_email:'E-mail comercial',
+      info_phone:'Telefone &amp; WhatsApp',
+      info_address:'Sede',
+      info_address_v:'São Paulo, SP — atendimento remoto em todo o Brasil',
+      info_address_v_short:'São Paulo, SP',
+
+      f_name:'Nome', f_name_p:'Seu nome',
+      f_email:'E-mail corporativo', f_email_p:'voce@empresa.com.br',
+      f_company:'Empresa', f_company_p:'Razão social ou nome',
+      f_type:'Tipo de projeto', f_type_p:'Selecione...',
+      f_t1:'Software sob medida', f_t2:'Site ou Web App', f_t3:'Sistema ERP',
+      f_t4:'Integração / API', f_t5:'Cloud &amp; DevOps', f_t6:'Manutenção / Suporte',
+      f_msg:'Mensagem', f_msg_p:'Conte brevemente o contexto, prazos e o que você precisa resolver.',
+      f_submit:'Enviar mensagem', f_sent:'Mensagem enviada ✓',
+      f_privacy:'Seus dados são tratados conforme a LGPD.',
+
+      foot_about:'Engenharia de software brasileira para operações que tratam tecnologia como infraestrutura crítica.',
+      foot_col_services:'Serviços', foot_col_company:'Empresa', foot_col_contact:'Contato',
+      foot_link_careers:'Carreiras',
+      foot_copy:'© 2026 Azaz Tech · CNPJ 65.555.092 · Todos os direitos reservados',
+      wa_tip:'Conversar no WhatsApp',
+
+      cases_eyebrow:'CASES EM PRODUÇÃO',
+      cases_title:'Sistemas que sustentam operações reais.',
+      cases_meta:'PORTUÁRIO / LOGÍSTICA',
+      cases_cta:'Quero um projeto como esse',
+
+      c1_tag1:'Web full-stack', c1_tag2:'ERP interno', c1_tag3:'Em produção',
+      c1_tagline:'Gestão operacional fim a fim para empresa portuária — estoque, RH, equipamentos, navios, escalas, financeiro e WhatsApp em uma única plataforma, web e desktop.',
+      c1_h_about:'O Sistema', c1_h_stack:'Stack', c1_h_metrics:'Números',
+      c1_desc:'Substituiu múltiplas planilhas e grupos de WhatsApp descoordenados por um sistema único. Controla turnos de costado, equipes de embarque, EPIs entregues, equipamentos emprestados e fechamento financeiro por trabalho — com integração nativa ao WhatsApp e rastreio de navios em tempo real.',
+      c1_m1:'módulos de negócio', c1_m2:'tabelas Prisma', c1_m3:'matriz RBAC', c1_m4:'mesma base de código',
+      c1_modules:'Módulos principais',
+      c1_mod_dash:'Métricas &middot; logs de acesso',
+      c1_mod_ships:'Operações &middot; grupo WhatsApp',
+      c1_mod_scale:'4 turnos de costado',
+      c1_mod_stock:'Itens &middot; movimentações',
+      c1_mod_hr:'Colaboradores &middot; EPIs &middot; NR',
+      c1_mod_fin:'Fechamento &middot; rateio',
+      c1_mod_chat:'Inbox WhatsApp',
+      c1_mod_tools:'Empréstimo &middot; manutenção',
+      c1_mod_req_t:'Solicitações', c1_mod_req_d:'Fornecedores &middot; pedidos',
+      c1_highlights:'Destaques arquiteturais',
+      c1_hl1_t:'WhatsApp bidirecional',
+      c1_hl1_d:'Webhook + envio via Evolution API, persistência completa de mensagens e disparo automático ao grupo do navio quando uma escala é fechada.',
+      c1_hl2_t:'Fechamento com rateio',
+      c1_hl2_d:'Quando falta gente no turno, o valor da função ausente é redistribuído automaticamente entre quem trabalhou — com ajustes categorizados auditados.',
+      c1_hl3_t:'Híbrido web + desktop',
+      c1_hl3_d:'Mesma base de código Next.js empacotada em Electron para build .exe Windows, com PWA e auto-deploy via Railway.',
+
+      c2_tag1:'Desktop Python', c2_tag2:'Automação fiscal', c2_tag3:'SANPORT',
+      c2_subtitle:'Hub de Automação Portuária',
+      c2_tagline:'Aplicação desktop em Python/PyQt6 que automatiza o ciclo operacional e financeiro completo de navios no Porto de Santos — com emissão de NFS-e direto via SOAP + certificado A1.',
+      c2_h_about:'O Sistema', c2_h_stack:'Stack', c2_h_metrics:'Números',
+      c2_desc:'Substituiu planilhas manuais por um fluxo integrado: controle de navios, faturamento com cálculos automáticos por modalidade (ADM/ISS/MMO), emissão de NFS-e via SOAP/mTLS no GISS Online, integração com Outlook para rascunho de e-mails e dashboards com agregações em tempo real.',
+      c2_m1:'linhas de helpers', c2_m2:'módulos de negócio', c2_m3:'clientes parametrizados', c2_m4:'modalidades de faturamento',
+      c2_features:'Funcionalidades-chave',
+      c2_f1_t:'Controle de navios', c2_f1_d:'Entrada / saída &middot; status visual',
+      c2_f2_t:'Faturamento automático', c2_f2_d:'4 modalidades',
+      c2_f3_t:'Emissão NFS-e', c2_f3_d:'SOAP + mTLS &middot; GISS Online',
+      c2_f4_t:'Cálculos por cliente', c2_f4_d:'ADM &middot; ISS &middot; MMO',
+      c2_f5_t:'PDFs + Outlook', c2_f5_d:'Rascunhos via COM',
+      c2_f6_t:'Dashboards', c2_f6_d:'Agregações em tempo real',
+      c2_result_b:'RESULTADO',
+      c2_result_t:'Reduziu o tempo de geração de um faturamento completo de <b>horas para minutos</b>, com auditoria completa de envios fiscais ao GISS Online.',
+
+      tw_title:'Tweaks',
+      tw_lang:'Idioma',
+      tw_accent:'Acento',
+      tw_grid:'Grid de fundo', tw_grid_light:'Sutil', tw_grid_medium:'Médio', tw_grid_dense:'Denso',
+      tw_headline:'Headline', tw_headline_ph:'Headline do hero'
+    },
+    en: {
+      nav_services:'Services', nav_cases:'Case studies', nav_differentials:'Why us', nav_process:'Process', nav_contact:'Contact',
+      nav_cta:'Request a proposal',
+
+      hero_eyebrow:'SOFTWARE ENGINEERING • BRAZIL',
+      hero_headline:'Custom software for operations that <span class="accent">can\u2019t go down.</span>',
+      hero_sub:'Azaz Tech designs, builds and operates web systems, ERPs and integrations for companies that treat technology as critical infrastructure — with solid architecture, predictable delivery and long-term support.',
+      hero_cta_primary:'Talk to engineering',
+      hero_cta_secondary:'See services',
+      stat_years:'years in operation', stat_projects:'projects delivered', stat_uptime:'average uptime',
+
+      stack_label:'Production stack',
+
+      services_eyebrow:'WHAT WE BUILD',
+      services_title:'Engineering applied to your business.',
+      services_intro:'From MVP to mission-critical systems in production — always with the same standard of quality, documentation and ownership of the outcome.',
+      svc1_t:'Custom software',
+      svc1_d:'Applications designed around your operating model — we don\u2019t bend your business to fit an off-the-shelf product.',
+      svc2_t:'Websites &amp; Web Apps',
+      svc2_d:'Institutional sites, portals and platforms with carefully tuned performance, accessibility and technical SEO.',
+      svc3_t:'ERP Systems',
+      svc3_d:'End-to-end management platforms — finance, tax, inventory, production — with workflows designed around your operation.',
+      svc4_t:'Integrations &amp; APIs',
+      svc4_d:'We connect legacy systems, market ERPs and gateways via REST, GraphQL and messaging — with observability from day one.',
+      svc5_t:'Cloud &amp; DevOps',
+      svc5_d:'Infrastructure as code, CI/CD pipelines, observability and security — we deliver reproducible, auditable environments.',
+      svc6_t:'Maintenance &amp; Support',
+      svc6_d:'Continuous evolution contracts with SLA — security updates, performance, new features and on-call engineering.',
+
+      why_eyebrow:'WHY AZAZ TECH',
+      why_title:'Serious engineering, no noise.',
+      why_intro:'We work with practices that reduce risk and total cost of ownership — from the first commit to the tenth year in production.',
+      why1_t:'Clean, tested code',
+      why1_d:'Review standards, minimum test coverage and CI blocking regressions before deploy.',
+      why2_t:'Architecture built to scale',
+      why2_d:'Documented architecture decisions (ADRs), well-defined layers and decoupling that sustains growth.',
+      why3_t:'Predictable delivery',
+      why3_d:'Short cycles, controlled scope and transparent delivery metrics in every status meeting.',
+      why4_t:'Security by default',
+      why4_d:'OWASP best practices, secret management, dependency auditing and LGPD/GDPR compliance.',
+
+      process_eyebrow:'HOW WE WORK',
+      process_title:'A clear process, from first briefing to evolution in production.',
+      step1_t:'Discovery',
+      step1_d:'Business immersion, process mapping and realistic scope definition.',
+      step2_t:'Architecture',
+      step2_d:'Documented technical decisions, risks addressed and validated timeline.',
+      step3_t:'Development',
+      step3_d:'Short sprints, frequent reviews and incremental releases to staging.',
+      step4_t:'Delivery &amp; Evolution',
+      step4_d:'Monitored go-live and continuous partnership for product evolution in production.',
+
+      m_uptime:'average uptime', m_years:'years in operation', m_projects:'projects delivered', m_support:'on-call support',
+
+      contact_eyebrow:'LET\u2019S TALK',
+      contact_title:'Tell us about your project.',
+      contact_intro:'We reply within 1 business day with an initial analysis and proposed next steps. No endless forms — straight to the point.',
+      info_email:'Business email',
+      info_phone:'Phone &amp; WhatsApp',
+      info_address:'Headquarters',
+      info_address_v:'São Paulo, Brazil — remote service nationwide',
+      info_address_v_short:'São Paulo, BR',
+
+      f_name:'Name', f_name_p:'Your name',
+      f_email:'Work email', f_email_p:'you@company.com',
+      f_company:'Company', f_company_p:'Company name',
+      f_type:'Project type', f_type_p:'Select...',
+      f_t1:'Custom software', f_t2:'Website or Web App', f_t3:'ERP System',
+      f_t4:'Integration / API', f_t5:'Cloud &amp; DevOps', f_t6:'Maintenance / Support',
+      f_msg:'Message', f_msg_p:'Briefly describe context, timelines and what you need to solve.',
+      f_submit:'Send message', f_sent:'Message sent ✓',
+      f_privacy:'Your data is handled in accordance with LGPD/GDPR.',
+
+      foot_about:'Brazilian software engineering for operations that treat technology as critical infrastructure.',
+      foot_col_services:'Services', foot_col_company:'Company', foot_col_contact:'Contact',
+      foot_link_careers:'Careers',
+      foot_copy:'© 2026 Azaz Tech · CNPJ 65.555.092 · All rights reserved',
+      wa_tip:'Chat on WhatsApp',
+
+      cases_eyebrow:'CASE STUDIES IN PRODUCTION',
+      cases_title:'Systems sustaining real operations.',
+      cases_meta:'PORT / LOGISTICS',
+      cases_cta:'I want a project like this',
+
+      c1_tag1:'Full-stack web', c1_tag2:'Internal ERP', c1_tag3:'In production',
+      c1_tagline:'End-to-end operational management for a port company — inventory, HR, equipment, ships, shifts, finance and WhatsApp in a single platform, web and desktop.',
+      c1_h_about:'The system', c1_h_stack:'Stack', c1_h_metrics:'Numbers',
+      c1_desc:'Replaced scattered spreadsheets and WhatsApp groups with a single system. Controls dock shifts, boarding crews, delivered PPE, borrowed equipment and per-job financial closure — with native WhatsApp integration and real-time vessel tracking.',
+      c1_m1:'business modules', c1_m2:'Prisma tables', c1_m3:'RBAC matrix', c1_m4:'shared codebase',
+      c1_modules:'Main modules',
+      c1_mod_dash:'Metrics &middot; access logs',
+      c1_mod_ships:'Operations &middot; WhatsApp group',
+      c1_mod_scale:'4 dock shifts',
+      c1_mod_stock:'Items &middot; movements',
+      c1_mod_hr:'Employees &middot; PPE &middot; training',
+      c1_mod_fin:'Closing &middot; payout split',
+      c1_mod_chat:'WhatsApp inbox',
+      c1_mod_tools:'Loaning &middot; maintenance',
+      c1_mod_req_t:'Requests', c1_mod_req_d:'Suppliers &middot; orders',
+      c1_highlights:'Architectural highlights',
+      c1_hl1_t:'Bidirectional WhatsApp',
+      c1_hl1_d:'Webhook + outbound via Evolution API, full message persistence and automatic dispatch to the ship\u2019s group when a shift is closed.',
+      c1_hl2_t:'Closing with payout split',
+      c1_hl2_d:'When a role is missing on a shift, its value is automatically redistributed among those who actually worked — with categorized, audited adjustments.',
+      c1_hl3_t:'Hybrid web + desktop',
+      c1_hl3_d:'Same Next.js codebase packaged in Electron as a Windows .exe build, with PWA support and auto-deploy via Railway.',
+
+      c2_tag1:'Python desktop', c2_tag2:'Fiscal automation', c2_tag3:'SANPORT',
+      c2_subtitle:'Port Automation Hub',
+      c2_tagline:'Desktop application in Python/PyQt6 that automates the full operational and financial cycle of vessels at the Port of Santos — with NFS-e emission via SOAP + A1 digital certificate.',
+      c2_h_about:'The system', c2_h_stack:'Stack', c2_h_metrics:'Numbers',
+      c2_desc:'Replaced manual spreadsheets with an integrated flow: vessel control, automatic billing per modality (ADM/ISS/MMO), NFS-e emission via SOAP/mTLS at GISS Online, Outlook integration for email drafts and dashboards with real-time aggregations.',
+      c2_m1:'lines of helpers', c2_m2:'business modules', c2_m3:'parametrized clients', c2_m4:'billing modalities',
+      c2_features:'Key features',
+      c2_f1_t:'Vessel control', c2_f1_d:'In / out &middot; visual status',
+      c2_f2_t:'Automatic billing', c2_f2_d:'4 modalities',
+      c2_f3_t:'NFS-e emission', c2_f3_d:'SOAP + mTLS &middot; GISS Online',
+      c2_f4_t:'Per-client calculations', c2_f4_d:'ADM &middot; ISS &middot; MMO',
+      c2_f5_t:'PDFs + Outlook', c2_f5_d:'Drafts via COM',
+      c2_f6_t:'Dashboards', c2_f6_d:'Real-time aggregations',
+      c2_result_b:'OUTCOME',
+      c2_result_t:'Reduced the time to generate a full billing run from <b>hours to minutes</b>, with full audit of fiscal submissions to GISS Online.',
+
+      tw_title:'Tweaks',
+      tw_lang:'Language',
+      tw_accent:'Accent',
+      tw_grid:'Background grid', tw_grid_light:'Subtle', tw_grid_medium:'Medium', tw_grid_dense:'Dense',
+      tw_headline:'Headline', tw_headline_ph:'Hero headline'
+    }
+  };
+
+  // ===== APPLY LANGUAGE =====
+  function applyLang(lang){
+    const dict = I18N[lang] || I18N.pt;
+    document.documentElement.lang = (lang === 'pt' ? 'pt-BR' : 'en');
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const k = el.getAttribute('data-i18n');
+      if (dict[k] !== undefined) el.innerHTML = dict[k];
+    });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+      const k = el.getAttribute('data-i18n-ph');
+      if (dict[k] !== undefined) el.placeholder = dict[k];
+    });
+    document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+      const k = el.getAttribute('data-i18n-aria');
+      if (dict[k] !== undefined) el.setAttribute('aria-label', dict[k]);
+    });
+    // Apply user-customized headline override (tweak), if set
+    if (T.heroHeadline){
+      const el = document.getElementById('heroHeadline');
+      if (el) {
+        const v = T.heroHeadline.trim();
+        const parts = v.split(/\s+/);
+        if (parts.length > 4){
+          const head = parts.slice(0, parts.length - 3).join(' ');
+          const tail = parts.slice(-3).join(' ');
+          el.innerHTML = head + ' <span class="accent">' + tail + '</span>';
+        } else {
+          el.textContent = v;
+        }
+      }
+    }
+    // Reflect lang in both switchers and tweaks segment
+    document.querySelectorAll('.lang-switch').forEach(sw => {
+      sw.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.lang === lang));
+    });
+    const langSeg = document.querySelector('#tweaks .seg[data-tweak="lang"]');
+    if (langSeg) langSeg.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.v === lang));
+  }
+
+  // ===== NAV: scroll bg + mobile menu =====
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 12);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive:true });
+
+  const toggle = document.getElementById('navToggle');
+  const menu = document.getElementById('mobileMenu');
+  toggle?.addEventListener('click', () => menu.classList.toggle('open'));
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => menu.classList.remove('open')));
+
+  // ===== REVEAL on scroll =====
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+    }
+  }, { rootMargin: '0px 0px -10% 0px', threshold: 0.05 });
+  document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+
+  // ===== CARD pointer glow =====
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('pointermove', (e) => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', ((e.clientX - r.left)/r.width*100)+'%');
+      card.style.setProperty('--my', ((e.clientY - r.top)/r.height*100)+'%');
+    });
+  });
+
+  // ===== TWEAKS state =====
+  const panel = document.getElementById('tweaks');
+  const T = window.__TWEAKS__ || {};
+  // Restore language from localStorage if present (overrides default)
+  try {
+    const saved = localStorage.getItem('azaz_lang');
+    if (saved && I18N[saved]) T.lang = saved;
+  } catch(_) {}
+
+  // ===== FORM (mock) =====
+  window.handleSubmit = function(ev){
+    ev.preventDefault();
+    const btn = ev.target.querySelector('button[type="submit"]');
+    const original = btn.innerHTML;
+    const sentMsg = (I18N[T.lang] || I18N.pt).f_sent || 'Sent';
+    btn.innerHTML = sentMsg;
+    btn.style.opacity = '.85';
+    setTimeout(()=>{
+      btn.innerHTML = original;
+      btn.style.opacity = '';
+      ev.target.reset();
+    }, 2200);
+    return false;
+  };
+
+  // Apply non-language tweaks
+  const apply = (k, v) => {
+    if (k === 'accentMode') document.body.dataset.accent = v;
+    if (k === 'gridDensity') document.body.dataset.grid = v;
+    if (k === 'lang') {
+      try { localStorage.setItem('azaz_lang', v); } catch(_) {}
+      applyLang(v);
+    }
+    if (k === 'heroHeadline') {
+      const el = document.getElementById('heroHeadline');
+      if (el && v) {
+        const parts = v.trim().split(/\s+/);
+        if (parts.length > 4){
+          const head = parts.slice(0, parts.length - 3).join(' ');
+          const tail = parts.slice(-3).join(' ');
+          el.innerHTML = head + ' <span class="accent">' + tail + '</span>';
+        } else {
+          el.textContent = v;
+        }
+      }
+    }
+  };
+
+  // Initial apply
+  applyLang(T.lang || 'pt');
+  Object.keys(T).forEach(k => { if (k !== 'lang') apply(k, T[k]); });
+
+  const headlineEl = document.getElementById('tw-headline');
+  if (headlineEl) headlineEl.value = T.heroHeadline || '';
+
+  // Tweaks segments
+  panel.querySelectorAll('.seg').forEach(seg => {
+    const key = seg.dataset.tweak;
+    const curr = T[key];
+    seg.querySelectorAll('button').forEach(b => {
+      if (b.dataset.v === curr) b.classList.add('on');
+      b.addEventListener('click', () => {
+        seg.querySelectorAll('button').forEach(x => x.classList.remove('on'));
+        b.classList.add('on');
+        const v = b.dataset.v;
+        T[key] = v; apply(key, v);
+        window.parent.postMessage({ type:'__edit_mode_set_keys', edits:{ [key]: v }}, '*');
+      });
+    });
+  });
+  headlineEl?.addEventListener('input', (e) => {
+    T.heroHeadline = e.target.value;
+    apply('heroHeadline', e.target.value);
+    window.parent.postMessage({ type:'__edit_mode_set_keys', edits:{ heroHeadline: e.target.value }}, '*');
+  });
+
+  // ===== LANG SWITCH (navbar + mobile) =====
+  document.querySelectorAll('.lang-switch button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const v = btn.dataset.lang;
+      if (!v || !I18N[v]) return;
+      T.lang = v;
+      apply('lang', v);
+      window.parent.postMessage({ type:'__edit_mode_set_keys', edits:{ lang: v }}, '*');
+    });
+  });
+
+  // ===== EDIT MODE protocol =====
+  window.addEventListener('message', (e) => {
+    const d = e.data;
+    if (!d || typeof d !== 'object') return;
+    if (d.type === '__activate_edit_mode') panel.classList.add('open');
+    if (d.type === '__deactivate_edit_mode') panel.classList.remove('open');
+  });
+  document.getElementById('tweaksClose').addEventListener('click', () => {
+    panel.classList.remove('open');
+    window.parent.postMessage({ type:'__edit_mode_dismissed' }, '*');
+  });
+  window.parent.postMessage({ type:'__edit_mode_available' }, '*');
+})();
+</script>
+
+<style id="__om-edit-overrides"></style>
+</body>
+</html>
