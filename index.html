@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<!-- build: 2026-05-25-v3 -->
+<!-- build: 2026-05-25-v4 -->
 <title>Azaz Tech — Engenharia de Software para Operações Críticas</title>
 <meta name="description" content="A Azaz Tech projeta, constrói e opera sistemas sob medida — ERPs, plataformas web e integrações — para empresas que não podem parar." />
 
@@ -256,15 +256,18 @@
   }
   .mobile-menu{
     display:none;
-    position:fixed; inset:64px 0 auto 0;
-    background:rgba(5,7,13,.96);
-    backdrop-filter:blur(20px);
-    -webkit-backdrop-filter:blur(20px);
-    border-bottom:1px solid var(--line);
-    padding:24px;
-    z-index:49;
-    transform:translateY(-110%);
+    position:fixed; top:72px; left:0; right:0;
+    background:rgba(5,7,13,.98);
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+    border-bottom:1px solid var(--line-strong);
+    padding:20px 24px 28px;
+    z-index:60;
+    transform:translateY(-120%);
     transition:transform .35s cubic-bezier(.2,.7,.2,1);
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,.7);
+    max-height: calc(100vh - 72px);
+    overflow-y: auto;
   }
   .mobile-menu.open{ transform:translateY(0); }
   .mobile-menu a{
@@ -1453,6 +1456,105 @@
     .mock-emit{ font-size: 10.5px; padding: 6px 11px; }
     .mock-chrome{ padding: 8px; gap: 6px; }
     .mock-chrome .addr{ font-size: 9px; padding: 3px 6px; }
+  }
+
+  /* =========================================================
+     MOBILE — Density overrides (mais layout horizontal)
+     Override 1-col grids to keep 2-col where it fits.
+     ========================================================= */
+  @media (max-width: 640px){
+    /* Services: keep 2-col on mobile */
+    .services-grid{ grid-template-columns: repeat(2, 1fr) !important; gap: 12px; }
+    .card{ padding: 22px 18px 20px; }
+    .card h3{ font-size: 17px; }
+    .card .desc{ font-size: 13px; line-height:1.5; }
+    .card .icon{ width: 38px; height: 38px; margin-bottom: 16px; }
+    .card .icon svg{ width:18px; height:18px; }
+    .card .tags{ margin-top:14px; padding-top:12px; gap:5px; }
+    .tag{ font-size: 9.5px; padding: 4px 8px; }
+
+    /* Highlights: 2-col instead of 1 */
+    .highlights-row{ grid-template-columns: repeat(2, 1fr) !important; gap: 10px; }
+    .hl{ padding: 16px 14px; }
+    .hl h4{ font-size: 14.5px; }
+    .hl p{ font-size: 12.5px; line-height: 1.5; }
+    .hl .hl-num{ font-size: 9.5px; margin-bottom: 8px; }
+
+    /* Process: 2-col on mobile */
+    .process{ grid-template-columns: 1fr 1fr !important; gap: 32px 0; row-gap: 32px; }
+    .process::before{ display:none; }
+    .step{ padding: 0 12px; }
+    .step .node{ width: 52px; height: 52px; margin-bottom: 16px; font-size: 12px; }
+    .step h3{ font-size: 16px; }
+    .step p{ font-size: 13px; }
+
+    /* Modules: lock 2-col (don't collapse to 1) */
+    .modules-grid{ grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
+    .mod{ padding: 12px 12px; gap: 10px; }
+    .mod .ic{ width: 28px; height: 28px; }
+    .mod .ic svg{ width: 12px; height: 12px; }
+    .mod .name{ font-size: 13px; }
+    .mod .sub{ font-size: 9px; }
+
+    /* Footer: keep 2-col */
+    .foot-grid{ grid-template-columns: 1fr 1fr !important; gap: 28px 20px; }
+    .foot-brand{ grid-column: 1 / -1; }
+    .foot-col h4{ font-size: 10px; margin-bottom: 12px; }
+    .foot-col a{ font-size: 13px; }
+
+    /* Stack strip: tighter horizontal layout */
+    .stack-list .item{ font-size: 13px; }
+    .stack-list .item svg{ width: 15px; height: 15px; }
+
+    /* Hero stats: more compact horizontal */
+    .hero-stats{ gap: 14px; margin-top: 44px; }
+    .hero-stats .stat{ padding-left: 12px; }
+    .hero-stats .num{ font-size: 22px; }
+    .hero-stats .lbl{ font-size: 9.5px; letter-spacing: .1em; }
+
+    /* Hero visual smaller */
+    .hero-visual{ max-width: 280px; }
+
+    /* Cases head meta inline */
+    .cases-head{ gap: 12px; }
+    .cases-head .meta{ font-size: 10.5px; }
+
+    /* Case tags align left on wrap */
+    .case-tags{ margin-left: 0; }
+
+    /* Case metrics: 2-col with tighter padding */
+    .case-metrics .m{ padding: 12px 14px; }
+    .case-metrics .v{ font-size: 20px; }
+
+    /* Contact info compact */
+    .info-list{ gap: 16px; margin-top: 28px; }
+    .info-row{ font-size: 13.5px; gap: 12px; }
+    .info-row .ic{ width: 38px; height: 38px; }
+
+    /* Form */
+    .form{ padding: 24px 20px; }
+  }
+
+  @media (max-width: 420px){
+    /* Hero stats: lock 3-col horizontal */
+    .hero-stats{ grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .hero-stats .stat{ padding-left: 10px; }
+    .hero-stats .num{ font-size: 19px; }
+    .hero-stats .lbl{ font-size: 8.5px; }
+
+    /* Hero visual even smaller */
+    .hero-visual{ max-width: 240px; }
+
+    /* Services: still 2-col but tighter */
+    .services-grid{ gap: 10px; }
+    .card{ padding: 18px 14px 16px; }
+    .card h3{ font-size: 15.5px; }
+    .card .desc{ font-size: 12px; }
+
+    /* Modules tighter */
+    .mod{ padding: 10px; }
+    .mod .name{ font-size: 12px; }
+    .mod .sub{ font-size: 8.5px; }
   }
 
   /* =========================================================
@@ -2661,24 +2763,14 @@
   const toggle = document.getElementById('navToggle');
   const menu = document.getElementById('mobileMenu');
   if (toggle && menu) {
-    const handleToggle = (e) => {
+    toggle.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
       menu.classList.toggle('open');
-      document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
-    };
-    toggle.addEventListener('click', handleToggle);
+    });
     menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
       menu.classList.remove('open');
-      document.body.style.overflow = '';
     }));
-    // Close on tap outside menu
-    document.addEventListener('click', (e) => {
-      if (menu.classList.contains('open') && !menu.contains(e.target) && !toggle.contains(e.target)) {
-        menu.classList.remove('open');
-        document.body.style.overflow = '';
-      }
-    });
   }
 
   // ===== REVEAL on scroll =====
