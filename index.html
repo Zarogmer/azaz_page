@@ -1063,7 +1063,8 @@
     grid-template-columns: 130px 1fr;
     min-height:340px;
   }
-  @media (max-width:540px){ .mock-body{ grid-template-columns:90px 1fr; min-height:280px; } }
+  @media (max-width:640px){ .mock-body{ grid-template-columns:100px 1fr; min-height:280px; } }
+  @media (max-width:420px){ .mock-body{ grid-template-columns:84px 1fr; min-height:260px; } }
 
   .mock-side{
     border-right:1px solid var(--line);
@@ -1080,6 +1081,8 @@
     display:flex; align-items:center; gap:8px;
     white-space:nowrap;
     overflow:hidden;
+    text-overflow:ellipsis;
+    min-width:0;
   }
   .mock-side .si .dot{ width:6px; height:6px; border-radius:50%; background:var(--fg-faint); flex-shrink:0; }
   .mock-side .si.on{
@@ -1088,7 +1091,7 @@
   }
   .mock-side .si.on .dot{ background:var(--electric); box-shadow:0 0 8px var(--electric); }
 
-  .mock-main{ padding:18px; display:flex; flex-direction:column; gap:14px; }
+  .mock-main{ padding:18px; display:flex; flex-direction:column; gap:14px; min-width:0; overflow:hidden; }
   .mock-kpis{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
   .mock-kpi{
     border:1px solid var(--line);
@@ -1341,6 +1344,108 @@
   }
 
   body[data-accent="violet"]{ --royal:#6e5cff; --electric:#9c8bff; }
+
+  /* =========================================================
+     MOBILE — Case mockups, stack, polish
+     ========================================================= */
+  @media (max-width: 640px){
+    .case-block{
+      padding: 28px 18px;
+      border-radius: 18px;
+    }
+    .case-body{ gap: 28px; }
+    .case-aside .desc{ font-size: 14.5px; margin-bottom: 22px; }
+    .case-aside h4{ margin-bottom: 12px; }
+    .case-metrics .m{ padding: 14px 16px; }
+    .case-metrics .v{ font-size: 22px; }
+    .case-metrics .k{ font-size: 9.5px; }
+
+    .case-mock{ border-radius: 14px; }
+    .mock-chrome{ padding: 9px 10px; gap: 8px; font-size: 10.5px; }
+    .mock-chrome .addr{ padding: 4px 8px; font-size: 9.5px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .mock-side{ padding: 10px 6px; }
+    .mock-side .si{
+      font-size: 9.5px;
+      padding: 7px 6px;
+      gap: 6px;
+    }
+    .mock-main{ padding: 12px; gap: 10px; }
+
+    .mock-kpis{ gap: 6px; }
+    .mock-kpi{ padding: 8px 9px; min-width:0; }
+    .mock-kpi .v{ font-size: 15px; }
+    .mock-kpi .k{ font-size: 8.5px; letter-spacing: .1em; }
+
+    .mock-table .row{
+      grid-template-columns: 1fr 48px 60px;
+      gap: 6px;
+      padding: 8px 9px;
+      font-size: 10px;
+    }
+    .mock-table .row.head{ font-size: 8.5px; }
+    .mock-pill{ font-size: 8px; padding: 2px 6px; }
+
+    .mock-form{ gap: 8px; padding: 4px 2px; }
+    .mock-form .field{
+      grid-template-columns: 72px 1fr;
+      gap: 8px;
+      font-size: 10px;
+    }
+    .mock-form .field .l{ font-size: 8.5px; }
+    .mock-form .field .v{ font-size: 10.5px; padding: 6px 9px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+    .mock-totals{
+      grid-template-columns: 1fr;
+      gap: 6px;
+      padding: 11px 13px;
+      font-size: 10.5px;
+    }
+    .mock-totals .t{ min-width:0; }
+    .mock-totals .t b{ font-size: 11px; white-space:nowrap; }
+    .mock-emit{ font-size: 11px; padding: 7px 12px; }
+
+    .case-result{ padding: 20px; gap: 14px; }
+    .case-result p{ font-size: 14px; }
+
+    .stack-strip{ padding: 32px 0; }
+    .stack-strip .container{ gap: 18px; }
+    .stack-list{ gap: 14px 22px; }
+    .stack-list .item{ font-size: 14.5px; }
+
+    .section{ padding: clamp(60px, 12vw, 100px) 0; }
+
+    .case-title{ font-size: clamp(26px, 7vw, 34px); }
+    .case-tagline{ font-size: 15px; }
+
+    .section-head{ margin-bottom: 40px; }
+    .section-head p{ font-size: 15.5px; }
+  }
+
+  @media (max-width: 420px){
+    .case-block{ padding: 22px 14px; }
+    .case-body{ gap: 22px; }
+    .mock-side{ padding: 10px 4px; }
+    .mock-side .si{ font-size: 9px; padding: 6px 4px; gap: 5px; }
+    .mock-main{ padding: 10px; gap: 8px; }
+    .mock-kpi{ padding: 7px; }
+    .mock-kpi .v{ font-size: 13px; }
+    .mock-kpi .k{ font-size: 7.5px; letter-spacing: .06em; }
+    .mock-table .row{
+      grid-template-columns: 1fr 42px 54px;
+      font-size: 9.5px;
+      padding: 7px 7px;
+      gap: 4px;
+    }
+    .mock-pill{ font-size: 7.5px; padding: 2px 5px; }
+    .mock-form .field{ grid-template-columns: 62px 1fr; font-size: 9.5px; gap: 6px; }
+    .mock-form .field .l{ font-size: 8px; }
+    .mock-form .field .v{ font-size: 10px; padding: 5px 8px; }
+    .mock-totals{ font-size: 10px; padding: 10px 12px; }
+    .mock-totals .t b{ font-size: 10.5px; }
+    .mock-emit{ font-size: 10.5px; padding: 6px 11px; }
+    .mock-chrome{ padding: 8px; gap: 6px; }
+    .mock-chrome .addr{ font-size: 9px; padding: 3px 6px; }
+  }
 
   /* =========================================================
      WHATSAPP FAB
