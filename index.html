@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 <meta http-equiv="Pragma" content="no-cache" />
 <meta http-equiv="Expires" content="0" />
-<!-- build: 2026-05-25-v4 -->
+<!-- build: 2026-05-25-v5-mobile -->
 <title>Azaz Tech — Engenharia de Software para Operações Críticas</title>
 <meta name="description" content="A Azaz Tech projeta, constrói e opera sistemas sob medida — ERPs, plataformas web e integrações — para empresas que não podem parar." />
 
@@ -237,51 +237,72 @@
 
   .nav-toggle{
     display:none;
-    width:40px; height:40px;
-    border-radius:10px; border:1px solid var(--line-strong);
-    background:rgba(255,255,255,.02);
+    width:44px; height:44px;
+    border-radius:12px; border:1px solid var(--line-strong);
+    background:rgba(255,255,255,.04);
     color:var(--fg);
     align-items:center; justify-content:center;
     cursor:pointer;
     -webkit-tap-highlight-color: rgba(26,169,255,.2);
     touch-action: manipulation;
+    padding:0;
   }
-  .nav-toggle svg{ pointer-events:none; }
-  .nav-toggle:active{ background:rgba(255,255,255,.06); }
+  .nav-toggle svg{ pointer-events:none; width:22px; height:22px; }
+  .nav-toggle:active{ background:rgba(26,169,255,.12); border-color:rgba(26,169,255,.4); }
 
-  @media (max-width: 880px){
-    .nav-links, .nav-cta .btn-text{ display:none; }
-    .nav-toggle{ display:inline-flex; }
-    .mobile-menu{ display:block; }
-  }
+  /* Hamburger -> X morph */
+  .nav-toggle .ic-close{ display:none; }
+  .nav-toggle[aria-expanded="true"] .ic-open{ display:none; }
+  .nav-toggle[aria-expanded="true"] .ic-close{ display:block; }
+
+  /* Mobile menu — always in DOM, visibility toggled by transform/opacity */
   .mobile-menu{
-    display:none;
-    position:fixed; top:72px; left:0; right:0;
-    background:rgba(5,7,13,.98);
-    backdrop-filter:blur(24px);
-    -webkit-backdrop-filter:blur(24px);
-    border-bottom:1px solid var(--line-strong);
-    padding:20px 24px 28px;
-    z-index:60;
-    transform:translateY(-120%);
-    transition:transform .35s cubic-bezier(.2,.7,.2,1);
-    box-shadow: 0 30px 60px -20px rgba(0,0,0,.7);
-    max-height: calc(100vh - 72px);
-    overflow-y: auto;
+    position:fixed; top:0; left:0; right:0; bottom:0;
+    background:rgba(5,7,13,.985);
+    backdrop-filter:blur(28px);
+    -webkit-backdrop-filter:blur(28px);
+    padding:88px 28px 36px;
+    z-index:55;
+    transform:translateY(-100%);
+    opacity:0;
+    pointer-events:none;
+    transition:transform .42s cubic-bezier(.2,.7,.2,1), opacity .3s ease;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    display:flex; flex-direction:column;
   }
-  .mobile-menu.open{ transform:translateY(0); }
-  .mobile-menu a{
+  .mobile-menu.open{
+    transform:translateY(0);
+    opacity:1;
+    pointer-events:auto;
+  }
+  .mobile-menu a:not(.btn){
     display:block;
     color:var(--fg);
     text-decoration:none;
-    padding:14px 4px;
+    padding:18px 4px;
     font-family:var(--display);
-    font-size:22px;
+    font-size:26px;
     font-weight:500;
-    letter-spacing:-0.02em;
+    letter-spacing:-0.025em;
     border-bottom:1px solid var(--line);
   }
-  .mobile-menu .btn-primary{ margin-top:18px; width:100%; justify-content:center; }
+  .mobile-menu a:not(.btn):active{ color:var(--electric); }
+  .mobile-menu .btn-primary{
+    margin-top:28px;
+    width:100%;
+    justify-content:center;
+    padding:16px 22px;
+    font-size:15.5px;
+  }
+
+  /* Lock body scroll when menu open */
+  body.menu-open{ overflow:hidden; }
+
+  @media (max-width: 880px){
+    .nav-links, .nav-cta .btn-text{ display:none !important; }
+    .nav-toggle{ display:inline-flex !important; }
+  }
 
   /* =========================================================
      HERO
@@ -788,6 +809,32 @@
     padding-right:36px;
   }
   .form .btn-primary{ width:100%; justify-content:center; margin-top:8px; }
+  .form .btn-wa{
+    background: linear-gradient(135deg,#1ea757 0%,#25d366 100%);
+    box-shadow: 0 10px 40px -12px rgba(37,211,102,.6), inset 0 1px 0 rgba(255,255,255,.25);
+  }
+  .form .btn-wa:hover{
+    box-shadow: 0 16px 48px -10px rgba(37,211,102,.75), inset 0 1px 0 rgba(255,255,255,.3);
+  }
+  .form .form-alt{
+    margin-top:12px;
+    width:100%;
+    background:transparent;
+    border:1px dashed var(--line-strong);
+    color:var(--fg-dim);
+    border-radius:12px;
+    padding:11px 14px;
+    font-family:var(--body);
+    font-size:13.5px;
+    cursor:pointer;
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    transition: border-color .2s, color .2s, background .2s;
+  }
+  .form .form-alt:hover{
+    border-color:rgba(26,169,255,.4);
+    color:var(--fg);
+    background:rgba(26,169,255,.04);
+  }
   .form .privacy{
     margin-top:14px;
     font-family:var(--mono);
@@ -1357,204 +1404,250 @@
   body[data-accent="violet"]{ --royal:#6e5cff; --electric:#9c8bff; }
 
   /* =========================================================
-     MOBILE — Case mockups, stack, polish
+     MOBILE — Clean vertical layout (≤768px)
+     Mobile-first overrides ordered last so they always win.
      ========================================================= */
-  @media (max-width: 640px){
-    .case-block{
-      padding: 28px 18px;
-      border-radius: 18px;
+  @media (max-width: 768px){
+    :root{
+      --section-y: 72px;
     }
-    .case-body{ gap: 28px; }
-    .case-aside .desc{ font-size: 14.5px; margin-bottom: 22px; }
-    .case-aside h4{ margin-bottom: 12px; }
-    .case-metrics .m{ padding: 14px 16px; }
-    .case-metrics .v{ font-size: 22px; }
-    .case-metrics .k{ font-size: 9.5px; }
 
-    .case-mock{ border-radius: 14px; }
-    .mock-chrome{ padding: 9px 10px; gap: 8px; font-size: 10.5px; }
-    .mock-chrome .addr{ padding: 4px 8px; font-size: 9.5px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .mock-side{ padding: 10px 6px; }
-    .mock-side .si{
-      font-size: 9.5px;
-      padding: 7px 6px;
-      gap: 6px;
+    .container{ padding: 0 20px; }
+
+    /* Navbar: tighter padding on mobile */
+    .nav-inner{ padding: 14px 18px; }
+    .brand-mark{ width:34px; height:34px; }
+    .brand-word{ font-size:16px; }
+    .brand-word .tech{ font-size:12px; }
+
+    /* Section headings — keep generous breathing room */
+    .section{ padding: var(--section-y) 0; }
+    .section-head{ margin-bottom: 44px; text-align:left; }
+    .section-head .eyebrow{ font-size:11px; letter-spacing:.16em; }
+    .section-head h2{ font-size: clamp(28px, 8vw, 38px); margin-top:14px; }
+    .section-head p{ font-size: 15px; margin-top:14px; }
+
+    /* ---------- HERO ---------- */
+    .hero{ padding: 110px 0 60px; }
+    .hero-grid{ grid-template-columns: 1fr; gap: 36px; }
+    .hero-visual{
+      order:-1;
+      max-width: 240px;
+      margin: 0 auto;
     }
-    .mock-main{ padding: 12px; gap: 10px; }
-
-    .mock-kpis{ gap: 6px; }
-    .mock-kpi{ padding: 8px 9px; min-width:0; }
-    .mock-kpi .v{ font-size: 15px; }
-    .mock-kpi .k{ font-size: 8.5px; letter-spacing: .1em; }
-
-    .mock-table .row{
-      grid-template-columns: 1fr 48px 60px;
-      gap: 6px;
-      padding: 8px 9px;
-      font-size: 10px;
+    .hero h1{
+      font-size: clamp(36px, 9.2vw, 48px);
+      line-height:1.08;
+      margin-top:14px;
     }
-    .mock-table .row.head{ font-size: 8.5px; }
-    .mock-pill{ font-size: 8px; padding: 2px 6px; }
-
-    .mock-form{ gap: 8px; padding: 4px 2px; }
-    .mock-form .field{
-      grid-template-columns: 72px 1fr;
-      gap: 8px;
-      font-size: 10px;
+    .hero-sub{
+      font-size: 15.5px;
+      line-height:1.6;
+      margin-top:18px;
     }
-    .mock-form .field .l{ font-size: 8.5px; }
-    .mock-form .field .v{ font-size: 10.5px; padding: 6px 9px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-
-    .mock-totals{
-      grid-template-columns: 1fr;
-      gap: 6px;
-      padding: 11px 13px;
-      font-size: 10.5px;
+    .hero-cta{
+      margin-top:28px;
+      gap: 10px;
+      flex-direction:column;
+      align-items:stretch;
     }
-    .mock-totals .t{ min-width:0; }
-    .mock-totals .t b{ font-size: 11px; white-space:nowrap; }
-    .mock-emit{ font-size: 11px; padding: 7px 12px; }
-
-    .case-result{ padding: 20px; gap: 14px; }
-    .case-result p{ font-size: 14px; }
-
-    .stack-strip{ padding: 32px 0; }
-    .stack-strip .container{ gap: 18px; }
-    .stack-list{ gap: 14px 22px; }
-    .stack-list .item{ font-size: 14.5px; }
-
-    .section{ padding: clamp(60px, 12vw, 100px) 0; }
-
-    .case-title{ font-size: clamp(26px, 7vw, 34px); }
-    .case-tagline{ font-size: 15px; }
-
-    .section-head{ margin-bottom: 40px; }
-    .section-head p{ font-size: 15.5px; }
-  }
-
-  @media (max-width: 420px){
-    .case-block{ padding: 22px 14px; }
-    .case-body{ gap: 22px; }
-    .mock-side{ padding: 10px 4px; }
-    .mock-side .si{ font-size: 9px; padding: 6px 4px; gap: 5px; }
-    .mock-main{ padding: 10px; gap: 8px; }
-    .mock-kpi{ padding: 7px; }
-    .mock-kpi .v{ font-size: 13px; }
-    .mock-kpi .k{ font-size: 7.5px; letter-spacing: .06em; }
-    .mock-table .row{
-      grid-template-columns: 1fr 42px 54px;
-      font-size: 9.5px;
-      padding: 7px 7px;
-      gap: 4px;
+    .hero-cta .btn{
+      justify-content:center;
+      padding: 14px 22px;
+      font-size:15px;
     }
-    .mock-pill{ font-size: 7.5px; padding: 2px 5px; }
-    .mock-form .field{ grid-template-columns: 62px 1fr; font-size: 9.5px; gap: 6px; }
-    .mock-form .field .l{ font-size: 8px; }
-    .mock-form .field .v{ font-size: 10px; padding: 5px 8px; }
-    .mock-totals{ font-size: 10px; padding: 10px 12px; }
-    .mock-totals .t b{ font-size: 10.5px; }
-    .mock-emit{ font-size: 10.5px; padding: 6px 11px; }
-    .mock-chrome{ padding: 8px; gap: 6px; }
-    .mock-chrome .addr{ font-size: 9px; padding: 3px 6px; }
-  }
-
-  /* =========================================================
-     MOBILE — Density overrides (mais layout horizontal)
-     Override 1-col grids to keep 2-col where it fits.
-     ========================================================= */
-  @media (max-width: 640px){
-    /* Services: keep 2-col on mobile */
-    .services-grid{ grid-template-columns: repeat(2, 1fr) !important; gap: 12px; }
-    .card{ padding: 22px 18px 20px; }
-    .card h3{ font-size: 17px; }
-    .card .desc{ font-size: 13px; line-height:1.5; }
-    .card .icon{ width: 38px; height: 38px; margin-bottom: 16px; }
-    .card .icon svg{ width:18px; height:18px; }
-    .card .tags{ margin-top:14px; padding-top:12px; gap:5px; }
-    .tag{ font-size: 9.5px; padding: 4px 8px; }
-
-    /* Highlights: 2-col instead of 1 */
-    .highlights-row{ grid-template-columns: repeat(2, 1fr) !important; gap: 10px; }
-    .hl{ padding: 16px 14px; }
-    .hl h4{ font-size: 14.5px; }
-    .hl p{ font-size: 12.5px; line-height: 1.5; }
-    .hl .hl-num{ font-size: 9.5px; margin-bottom: 8px; }
-
-    /* Process: 2-col on mobile */
-    .process{ grid-template-columns: 1fr 1fr !important; gap: 32px 0; row-gap: 32px; }
-    .process::before{ display:none; }
-    .step{ padding: 0 12px; }
-    .step .node{ width: 52px; height: 52px; margin-bottom: 16px; font-size: 12px; }
-    .step h3{ font-size: 16px; }
-    .step p{ font-size: 13px; }
-
-    /* Modules: lock 2-col (don't collapse to 1) */
-    .modules-grid{ grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
-    .mod{ padding: 12px 12px; gap: 10px; }
-    .mod .ic{ width: 28px; height: 28px; }
-    .mod .ic svg{ width: 12px; height: 12px; }
-    .mod .name{ font-size: 13px; }
-    .mod .sub{ font-size: 9px; }
-
-    /* Footer: keep 2-col */
-    .foot-grid{ grid-template-columns: 1fr 1fr !important; gap: 28px 20px; }
-    .foot-brand{ grid-column: 1 / -1; }
-    .foot-col h4{ font-size: 10px; margin-bottom: 12px; }
-    .foot-col a{ font-size: 13px; }
-
-    /* Stack strip: tighter horizontal layout */
-    .stack-list .item{ font-size: 13px; }
-    .stack-list .item svg{ width: 15px; height: 15px; }
-
-    /* Hero stats: more compact horizontal */
-    .hero-stats{ gap: 14px; margin-top: 44px; }
+    .hero-stats{
+      margin-top: 40px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      max-width:none;
+    }
     .hero-stats .stat{ padding-left: 12px; }
     .hero-stats .num{ font-size: 22px; }
     .hero-stats .lbl{ font-size: 9.5px; letter-spacing: .1em; }
 
-    /* Hero visual smaller */
-    .hero-visual{ max-width: 280px; }
+    /* ---------- STACK STRIP ---------- */
+    .stack-strip{ padding: 28px 0; }
+    .stack-strip .container{
+      flex-direction:column;
+      align-items:flex-start;
+      gap: 16px;
+    }
+    .stack-list{ gap: 12px 22px; }
+    .stack-list .item{ font-size: 13.5px; }
+    .stack-list .item svg{ width: 16px; height: 16px; }
 
-    /* Cases head meta inline */
-    .cases-head{ gap: 12px; }
+    /* ---------- SERVICES ---------- */
+    .services-grid{ grid-template-columns: 1fr; gap: 14px; }
+    .card{ padding: 26px 22px 24px; border-radius: 18px; }
+    .card .icon{ width: 44px; height: 44px; margin-bottom: 18px; }
+    .card .icon svg{ width:20px; height:20px; }
+    .card h3{ font-size: 19px; margin-bottom: 8px; }
+    .card .desc{ font-size: 14.5px; line-height:1.55; }
+    .card .tags{ margin-top:18px; padding-top:14px; gap:6px; }
+
+    /* ---------- DIFFERENTIALS (why) ---------- */
+    .why{ grid-template-columns:1fr; gap: 32px; }
+    .why-item{ grid-template-columns: 44px 1fr; gap:14px; padding: 20px 0; }
+    .why-item h3{ font-size: 17px; }
+    .why-item p{ font-size: 14px; }
+    .code-window{ display:none; }
+
+    /* ---------- PROCESS ---------- */
+    .process{
+      grid-template-columns: 1fr;
+      gap: 0;
+      counter-reset: ps;
+    }
+    .process::before{ display:none; }
+    .step{
+      padding: 22px 0 22px 76px;
+      text-align:left;
+      border-top: 1px solid var(--line);
+      position:relative;
+    }
+    .step:last-child{ border-bottom:1px solid var(--line); }
+    .step .node{
+      margin: 0;
+      position:absolute;
+      left: 4px;
+      top: 22px;
+      width: 56px; height: 56px;
+      font-size: 12px;
+    }
+    .step h3{ font-size: 17px; margin-bottom: 6px; }
+    .step p{ font-size: 14px; max-width:none; margin: 0; }
+
+    /* ---------- METRICS ---------- */
+    .metrics{ padding: 56px 0; }
+    .metrics-grid{ grid-template-columns: repeat(2, 1fr); gap: 38px 18px; }
+    .metric .v{ font-size: clamp(30px, 8vw, 40px); }
+    .metric .k{ font-size: 10.5px; letter-spacing: .14em; margin-top: 10px; }
+
+    /* ---------- CONTACT ---------- */
+    .contact{ grid-template-columns: 1fr; gap: 40px; }
+    .info-list{ margin-top: 28px; gap: 18px; }
+    .info-row{ font-size: 14px; gap: 14px; }
+    .info-row .ic{ width: 42px; height: 42px; }
+    .info-row .val{ font-size: 14.5px; }
+    .form{ padding: 24px 20px; border-radius: 22px; }
+    .form-row.two{ grid-template-columns: 1fr; gap:14px; }
+    .form input, .form select, .form textarea{
+      font-size: 16px; /* prevent iOS zoom on focus */
+      padding: 13px 14px;
+    }
+    .form .btn-primary{ padding: 15px 22px; font-size: 15px; }
+
+    /* ---------- FOOTER ---------- */
+    footer{ padding: 52px 0 20px; }
+    .foot-grid{ grid-template-columns: 1fr; gap: 36px; }
+    .foot-brand p{ max-width:none; }
+    .foot-col h4{ margin-bottom: 14px; }
+    .foot-col a{ font-size: 14px; }
+    .foot-bottom{
+      margin-top: 40px;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 14px;
+      text-align: left;
+    }
+
+    /* ---------- CASES ---------- */
+    .cases-head{ grid-template-columns: 1fr; gap: 10px; }
+    .cases-head h2{ margin-top: 12px; font-size: clamp(28px, 8vw, 38px); }
     .cases-head .meta{ font-size: 10.5px; }
-
-    /* Case tags align left on wrap */
+    .case-block{
+      padding: 28px 20px;
+      border-radius: 20px;
+      margin-bottom: 22px;
+    }
+    .case-head{ gap: 10px; }
+    .case-num{ font-size: 12px; }
     .case-tags{ margin-left: 0; }
+    .case-title{ font-size: clamp(24px, 7vw, 32px); margin: 10px 0 12px; }
+    .case-tagline{ font-size: 14.5px; line-height: 1.55; }
+    .case-body{
+      grid-template-columns: 1fr;
+      gap: 26px;
+      margin-top: 28px;
+    }
+    .case-aside .desc{ font-size: 14.5px; line-height: 1.6; margin-bottom: 22px; }
+    .case-aside h4{ margin-bottom: 12px; font-size: 10.5px; }
+    .case-metrics{ grid-template-columns: repeat(2, 1fr); }
+    .case-metrics .m{ padding: 14px 16px; }
+    .case-metrics .v{ font-size: 22px; }
+    .case-metrics .k{ font-size: 9.5px; }
 
-    /* Case metrics: 2-col with tighter padding */
-    .case-metrics .m{ padding: 12px 14px; }
-    .case-metrics .v{ font-size: 20px; }
+    /* Case mockups: keep but make compact */
+    .case-mock{ border-radius: 14px; }
+    .mock-chrome{ padding: 9px 10px; gap: 8px; font-size: 10.5px; }
+    .mock-chrome .addr{ padding: 4px 8px; font-size: 9.5px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .mock-body{ grid-template-columns: 92px 1fr; min-height: 280px; }
+    .mock-side{ padding: 10px 6px; }
+    .mock-side .si{ font-size: 9.5px; padding: 7px 6px; gap: 6px; }
+    .mock-main{ padding: 12px; gap: 10px; }
+    .mock-kpis{ gap: 6px; }
+    .mock-kpi{ padding: 8px 9px; min-width:0; }
+    .mock-kpi .v{ font-size: 15px; }
+    .mock-kpi .k{ font-size: 8.5px; letter-spacing: .1em; }
+    .mock-table .row{
+      grid-template-columns: 1fr 48px 60px;
+      gap: 6px; padding: 8px 9px; font-size: 10px;
+    }
+    .mock-table .row.head{ font-size: 8.5px; }
+    .mock-pill{ font-size: 8px; padding: 2px 6px; }
+    .mock-form{ gap: 8px; padding: 4px 2px; }
+    .mock-form .field{ grid-template-columns: 72px 1fr; gap: 8px; font-size: 10px; }
+    .mock-form .field .l{ font-size: 8.5px; }
+    .mock-form .field .v{ font-size: 10.5px; padding: 6px 9px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .mock-totals{ grid-template-columns: 1fr; gap: 6px; padding: 11px 13px; font-size: 10.5px; }
+    .mock-totals .t{ min-width:0; }
+    .mock-totals .t b{ font-size: 11px; white-space:nowrap; }
+    .mock-emit{ font-size: 11px; padding: 7px 12px; }
 
-    /* Contact info compact */
-    .info-list{ gap: 16px; margin-top: 28px; }
-    .info-row{ font-size: 13.5px; gap: 12px; }
-    .info-row .ic{ width: 38px; height: 38px; }
+    .case-result{
+      grid-template-columns: 1fr;
+      padding: 20px;
+      gap: 14px;
+      margin-top: 26px;
+    }
+    .case-result p{ font-size: 14px; }
 
-    /* Form */
-    .form{ padding: 24px 20px; }
+    /* Modules + highlights inside case: single column for readability */
+    .modules-grid{ grid-template-columns: 1fr; gap: 8px; }
+    .mod{ padding: 14px 16px; gap: 12px; }
+    .mod .ic{ width: 32px; height: 32px; }
+    .mod .ic svg{ width: 14px; height: 14px; }
+    .mod .name{ font-size: 14px; }
+    .mod .sub{ font-size: 10px; }
+
+    .highlights-row{ grid-template-columns: 1fr; gap: 10px; }
+    .hl{ padding: 18px 16px; }
+    .hl h4{ font-size: 15.5px; }
+    .hl p{ font-size: 13.5px; line-height: 1.55; }
+    .hl .hl-num{ font-size: 10px; margin-bottom: 10px; }
+
+    /* Hide tweaks panel button on mobile to declutter */
+    #tweaks{ display:none; }
   }
 
-  @media (max-width: 420px){
-    /* Hero stats: lock 3-col horizontal */
-    .hero-stats{ grid-template-columns: repeat(3, 1fr); gap: 10px; }
-    .hero-stats .stat{ padding-left: 10px; }
+  /* Smallest phones */
+  @media (max-width: 380px){
+    .container{ padding: 0 16px; }
+    .nav-inner{ padding: 12px 14px; }
+    .hero{ padding: 100px 0 48px; }
+    .hero h1{ font-size: clamp(32px, 9vw, 42px); }
+    .hero-visual{ max-width: 200px; }
     .hero-stats .num{ font-size: 19px; }
     .hero-stats .lbl{ font-size: 8.5px; }
-
-    /* Hero visual even smaller */
-    .hero-visual{ max-width: 240px; }
-
-    /* Services: still 2-col but tighter */
-    .services-grid{ gap: 10px; }
-    .card{ padding: 18px 14px 16px; }
-    .card h3{ font-size: 15.5px; }
-    .card .desc{ font-size: 12px; }
-
-    /* Modules tighter */
-    .mod{ padding: 10px; }
-    .mod .name{ font-size: 12px; }
-    .mod .sub{ font-size: 8.5px; }
+    .case-block{ padding: 24px 16px; }
+    .mock-body{ grid-template-columns: 82px 1fr; min-height: 260px; }
+    .mock-side .si{ font-size: 9px; padding: 6px 4px; gap: 5px; }
+    .mock-main{ padding: 10px; gap: 8px; }
+    .mock-kpi{ padding: 7px; }
+    .mock-kpi .v{ font-size: 13px; }
+    .mock-table .row{ grid-template-columns: 1fr 42px 54px; font-size: 9.5px; padding: 7px; gap: 4px; }
+    .mock-form .field{ grid-template-columns: 60px 1fr; font-size: 9.5px; gap: 6px; }
   }
 
   /* =========================================================
@@ -1707,8 +1800,9 @@
         <span data-i18n="nav_cta">Solicitar proposta</span>
         <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
       </a>
-      <button class="nav-toggle" id="navToggle" aria-label="Menu">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="mobileMenu">
+        <svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
     </div>
   </div>
@@ -2304,25 +2398,25 @@
         </div>
       </div>
 
-      <form class="form" data-reveal style="--rd:120ms" onsubmit="return handleSubmit(event)">
+      <form class="form" id="contactForm" data-reveal style="--rd:120ms" onsubmit="return handleSubmit(event)">
         <div class="form-row two">
           <div>
             <label for="f-nome" data-i18n="f_name">Nome</label>
-            <input id="f-nome" type="text" required placeholder="Seu nome" data-i18n-ph="f_name_p" />
+            <input id="f-nome" name="nome" type="text" required placeholder="Seu nome" data-i18n-ph="f_name_p" />
           </div>
           <div>
             <label for="f-email" data-i18n="f_email">E-mail corporativo</label>
-            <input id="f-email" type="email" required placeholder="voce@empresa.com.br" data-i18n-ph="f_email_p" />
+            <input id="f-email" name="email" type="email" required placeholder="voce@empresa.com.br" data-i18n-ph="f_email_p" />
           </div>
         </div>
         <div class="form-row two">
           <div>
             <label for="f-empresa" data-i18n="f_company">Empresa</label>
-            <input id="f-empresa" type="text" required placeholder="Razão social ou nome" data-i18n-ph="f_company_p" />
+            <input id="f-empresa" name="empresa" type="text" required placeholder="Razão social ou nome" data-i18n-ph="f_company_p" />
           </div>
           <div>
             <label for="f-tipo" data-i18n="f_type">Tipo de projeto</label>
-            <select id="f-tipo" required>
+            <select id="f-tipo" name="tipo" required>
               <option value="" data-i18n="f_type_p">Selecione...</option>
               <option data-i18n="f_t1">Software sob medida</option>
               <option data-i18n="f_t2">Site ou Web App</option>
@@ -2335,11 +2429,15 @@
         </div>
         <div class="form-row">
           <label for="f-msg" data-i18n="f_msg">Mensagem</label>
-          <textarea id="f-msg" rows="4" required placeholder="Conte brevemente o contexto, prazos e o que você precisa resolver." data-i18n-ph="f_msg_p"></textarea>
+          <textarea id="f-msg" name="mensagem" rows="4" required placeholder="Conte brevemente o contexto, prazos e o que você precisa resolver." data-i18n-ph="f_msg_p"></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">
-          <span data-i18n="f_submit">Enviar mensagem</span>
-          <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        <button type="submit" class="btn btn-primary btn-wa">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 004.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.84 9.84 0 0012.04 2zm0 18.13h-.01a8.21 8.21 0 01-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 01-1.26-4.36c0-4.54 3.7-8.23 8.24-8.23 2.2 0 4.27.86 5.82 2.41a8.18 8.18 0 012.41 5.83c0 4.54-3.7 8.23-8.24 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.81-.78.97-.14.16-.29.18-.54.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.38-1.72-.14-.25-.01-.39.11-.51.11-.11.25-.29.37-.43.13-.14.16-.24.25-.41.08-.16.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.4-.41-.55-.42l-.47-.01a.9.9 0 00-.65.31c-.22.24-.86.84-.86 2.06s.88 2.39 1 2.55c.12.16 1.74 2.66 4.2 3.73.59.25 1.04.41 1.4.52.59.19 1.12.16 1.55.1.47-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg>
+          <span data-i18n="f_submit">Enviar pelo WhatsApp</span>
+        </button>
+        <button type="button" class="form-alt" onclick="sendByEmail(event)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <span data-i18n="f_email_alt">Prefere enviar por e-mail?</span>
         </button>
         <div class="privacy" data-i18n="f_privacy">Seus dados são tratados conforme a LGPD.</div>
       </form>
@@ -2525,7 +2623,11 @@
       f_t1:'Software sob medida', f_t2:'Site ou Web App', f_t3:'Sistema ERP',
       f_t4:'Integração / API', f_t5:'Cloud &amp; DevOps', f_t6:'Manutenção / Suporte',
       f_msg:'Mensagem', f_msg_p:'Conte brevemente o contexto, prazos e o que você precisa resolver.',
-      f_submit:'Enviar mensagem', f_sent:'Mensagem enviada ✓',
+      f_submit:'Enviar pelo WhatsApp', f_sent:'Abrindo WhatsApp…',
+      f_email_alt:'Prefere enviar por e-mail?',
+      f_wa_greeting:'Olá, Azaz Tech! Vim pelo site e gostaria de conversar sobre um projeto.',
+      f_wa_label_nome:'Nome', f_wa_label_email:'E-mail', f_wa_label_empresa:'Empresa', f_wa_label_tipo:'Tipo de projeto', f_wa_label_msg:'Mensagem',
+      f_mail_subject:'Contato pelo site — proposta de projeto',
       f_privacy:'Seus dados são tratados conforme a LGPD.',
 
       foot_about:'Engenharia de software brasileira para operações que tratam tecnologia como infraestrutura crítica.',
@@ -2654,7 +2756,11 @@
       f_t1:'Custom software', f_t2:'Website or Web App', f_t3:'ERP System',
       f_t4:'Integration / API', f_t5:'Cloud &amp; DevOps', f_t6:'Maintenance / Support',
       f_msg:'Message', f_msg_p:'Briefly describe context, timelines and what you need to solve.',
-      f_submit:'Send message', f_sent:'Message sent ✓',
+      f_submit:'Send via WhatsApp', f_sent:'Opening WhatsApp…',
+      f_email_alt:'Prefer to send by email?',
+      f_wa_greeting:'Hi Azaz Tech! I came through the website and would like to talk about a project.',
+      f_wa_label_nome:'Name', f_wa_label_email:'Email', f_wa_label_empresa:'Company', f_wa_label_tipo:'Project type', f_wa_label_msg:'Message',
+      f_mail_subject:'Website contact — project request',
       f_privacy:'Your data is handled in accordance with LGPD/GDPR.',
 
       foot_about:'Brazilian software engineering for operations that treat technology as critical infrastructure.',
@@ -2763,14 +2869,29 @@
   const toggle = document.getElementById('navToggle');
   const menu = document.getElementById('mobileMenu');
   if (toggle && menu) {
+    const openMenu = () => {
+      menu.classList.add('open');
+      document.body.classList.add('menu-open');
+      toggle.setAttribute('aria-expanded', 'true');
+    };
+    const closeMenu = () => {
+      menu.classList.remove('open');
+      document.body.classList.remove('menu-open');
+      toggle.setAttribute('aria-expanded', 'false');
+    };
     toggle.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      menu.classList.toggle('open');
+      if (menu.classList.contains('open')) closeMenu(); else openMenu();
     });
-    menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-      menu.classList.remove('open');
-    }));
+    menu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu.classList.contains('open')) closeMenu();
+    });
+    // Auto-close if viewport grows beyond mobile breakpoint
+    window.matchMedia('(min-width: 881px)').addEventListener('change', (e) => {
+      if (e.matches) closeMenu();
+    });
   }
 
   // ===== REVEAL on scroll =====
@@ -2799,19 +2920,83 @@
     if (saved && I18N[saved]) T.lang = saved;
   } catch(_) {}
 
-  // ===== FORM (mock) =====
-  window.handleSubmit = function(ev){
-    ev.preventDefault();
-    const btn = ev.target.querySelector('button[type="submit"]');
+  // ===== FORM: build wa.me / mailto: with the form data =====
+  const WA_NUMBER = '5513996744755';
+  const SUPPORT_EMAIL = 'azaztech.suporte@gmail.com';
+
+  function getFormPayload(form){
+    const dict = I18N[T.lang] || I18N.pt;
+    return {
+      nome: form.querySelector('#f-nome').value.trim(),
+      email: form.querySelector('#f-email').value.trim(),
+      empresa: form.querySelector('#f-empresa').value.trim(),
+      tipo: form.querySelector('#f-tipo').value.trim(),
+      mensagem: form.querySelector('#f-msg').value.trim(),
+      L: {
+        nome: dict.f_wa_label_nome || 'Name',
+        email: dict.f_wa_label_email || 'Email',
+        empresa: dict.f_wa_label_empresa || 'Company',
+        tipo: dict.f_wa_label_tipo || 'Project type',
+        msg: dict.f_wa_label_msg || 'Message',
+        greeting: dict.f_wa_greeting || 'Hello, Azaz Tech!',
+        subject: dict.f_mail_subject || 'Website contact'
+      }
+    };
+  }
+
+  function buildBody(p, bold){
+    const b = bold ? '*' : '';
+    return [
+      p.L.greeting,
+      '',
+      `${b}${p.L.nome}:${b} ${p.nome}`,
+      `${b}${p.L.email}:${b} ${p.email}`,
+      `${b}${p.L.empresa}:${b} ${p.empresa}`,
+      `${b}${p.L.tipo}:${b} ${p.tipo}`,
+      '',
+      `${b}${p.L.msg}:${b}`,
+      p.mensagem
+    ].join('\n');
+  }
+
+  function flashSent(form){
+    const btn = form.querySelector('button[type="submit"]');
+    if (!btn) return;
     const original = btn.innerHTML;
     const sentMsg = (I18N[T.lang] || I18N.pt).f_sent || 'Sent';
+    btn.dataset.busy = '1';
     btn.innerHTML = sentMsg;
     btn.style.opacity = '.85';
-    setTimeout(()=>{
+    setTimeout(() => {
       btn.innerHTML = original;
       btn.style.opacity = '';
-      ev.target.reset();
-    }, 2200);
+      delete btn.dataset.busy;
+    }, 1800);
+  }
+
+  window.handleSubmit = function(ev){
+    ev.preventDefault();
+    const form = ev.target;
+    if (!form.checkValidity()){ form.reportValidity(); return false; }
+    const p = getFormPayload(form);
+    const text = buildBody(p, true);
+    const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(text)}`;
+    flashSent(form);
+    const win = window.open(url, '_blank', 'noopener');
+    if (!win) window.location.href = url;
+    return false;
+  };
+
+  window.sendByEmail = function(ev){
+    ev.preventDefault();
+    const form = document.getElementById('contactForm');
+    if (!form) return false;
+    if (!form.checkValidity()){ form.reportValidity(); return false; }
+    const p = getFormPayload(form);
+    const subject = `${p.L.subject} — ${p.nome}${p.empresa ? ' ('+p.empresa+')' : ''}`;
+    const body = buildBody(p, false);
+    const url = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.location.href = url;
     return false;
   };
 
