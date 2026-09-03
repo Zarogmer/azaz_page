@@ -2313,7 +2313,7 @@
 
       <div class="case-body">
         <!-- Apresentação: telas reais do sistema -->
-        <div class="case-shots" data-gallery="yuta" style="--shots:4; --shots-sm:2;">
+        <div class="case-shots" data-gallery="yuta" style="--shots:5; --shots-sm:2;">
           <figure class="case-mock shot-fig">
             <div class="mock-chrome win">
               <div style="display:flex;align-items:center;gap:8px;color:var(--fg);font-family:var(--mono);font-size:11px;">
@@ -2323,23 +2323,24 @@
               <div style="flex:1;"></div>
               <div class="winctl"><span>−</span><span>□</span><span>×</span></div>
             </div>
-            <div class="shot-frame" style="aspect-ratio:1326/902;" role="button" tabindex="0" aria-label="Ampliar tela do Yuta">
-              <img class="shot-stage-img" src="assets/yuta-central.png" alt="Central Yuta — menu de comandos com rotinas de gestão, funcionalidades, faturamentos e configurações" decoding="async">
+            <div class="shot-frame" style="aspect-ratio:1200/880;" role="button" tabindex="0" aria-label="Ampliar tela do Yuta">
+              <img class="shot-stage-img" src="assets/yuta-login.png" alt="Yuta — tela de login multiusuário com seleção de perfil e campo de senha" decoding="async">
               <span class="shot-zoom" aria-hidden="true">
                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
                 <span data-i18n="shots_zoom">Ampliar</span>
               </span>
             </div>
             <figcaption class="shot-caps">
-              <div class="shot-cap is-on"><b data-i18n="c2_s1_t">Central de comandos</b><span data-i18n="c2_s1_d">Todas as rotinas em um só lugar — gestão, cadastros, faturamentos e configurações. Cada botão dispara uma automação completa.</span></div>
+              <div class="shot-cap is-on"><b data-i18n="c2_s1_t">Login multiusuário</b><span data-i18n="c2_s1_d">Cada operador entra com seu próprio perfil e senha — toda ação no sistema fica registrada por usuário.</span></div>
               <div class="shot-cap"><b data-i18n="c2_s2_t">Entradas e saídas de navios</b><span data-i18n="c2_s2_d">Espelho digital da planilha operacional: busca por navio ou agência, filtros por período e status de cada requisição em tempo real.</span></div>
               <div class="shot-cap"><b data-i18n="c2_s3_t">Controle de faturamento</b><span data-i18n="c2_s3_d">Linha a linha: ETB, ETS, responsável, serviço, prazo e status de envio — tudo conferível antes de faturar, sem abrir o Excel.</span></div>
-              <div class="shot-cap"><b data-i18n="c2_s4_t">Emissor de NFS-e</b><span data-i18n="c2_s4_d">Emissão, consulta, substituição e cancelamento de NFS-e direto no GISS Online da Prefeitura de Santos — em ambiente de produção.</span></div>
+              <div class="shot-cap"><b data-i18n="c2_s4_t">Relatórios por cliente</b><span data-i18n="c2_s4_d">Ranking de clientes por faturamento, lucro ADM, valores a receber e pontos — filtros por métrica, mês, ano e cliente, com gráfico atualizado na hora.</span></div>
+              <div class="shot-cap"><b data-i18n="c2_s5_t">Emissor de NFS-e</b><span data-i18n="c2_s5_d">Emissão, consulta, substituição e cancelamento de NFS-e direto no GISS Online da Prefeitura de Santos — em ambiente de produção.</span></div>
             </figcaption>
           </figure>
           <div class="shot-thumbs" role="tablist" aria-label="Telas do Yuta">
-            <button type="button" class="shot-thumb is-on" role="tab" aria-selected="true" data-full="assets/yuta-central.png" data-alt="Central Yuta — menu de comandos com rotinas de gestão, funcionalidades, faturamentos e configurações">
-              <img src="assets/yuta-central.png" alt="" loading="lazy" decoding="async"><span data-i18n="c2_s1_tab">Central</span>
+            <button type="button" class="shot-thumb is-on" role="tab" aria-selected="true" data-full="assets/yuta-login.png" data-alt="Yuta — tela de login multiusuário com seleção de perfil e campo de senha">
+              <img src="assets/yuta-login.png" alt="" loading="lazy" decoding="async"><span data-i18n="c2_s1_tab">Login</span>
             </button>
             <button type="button" class="shot-thumb" role="tab" aria-selected="false" data-full="assets/yuta-entradas-saidas.png" data-alt="Yuta — controle de entradas e saídas de navios com filtros por período e status de requisição">
               <img src="assets/yuta-entradas-saidas.png" alt="" loading="lazy" decoding="async"><span data-i18n="c2_s2_tab">Navios</span>
@@ -2347,8 +2348,11 @@
             <button type="button" class="shot-thumb" role="tab" aria-selected="false" data-full="assets/yuta-tabela-envios.png" data-alt="Yuta — tabela de faturamento com ETB, ETS, responsável, serviço, prazo e status de envio por navio">
               <img src="assets/yuta-tabela-envios.png" alt="" loading="lazy" decoding="async"><span data-i18n="c2_s3_tab">Faturamento</span>
             </button>
+            <button type="button" class="shot-thumb" role="tab" aria-selected="false" data-full="assets/yuta-relatorio.png" data-alt="Yuta — relatório com ranking de clientes por faturamento, lucro e recebimentos, com gráfico de barras">
+              <img src="assets/yuta-relatorio.png" alt="" loading="lazy" decoding="async"><span data-i18n="c2_s4_tab">Relatório</span>
+            </button>
             <button type="button" class="shot-thumb" role="tab" aria-selected="false" data-full="assets/yuta-nfse.png" data-alt="Yuta — gerador de NFS-e integrado ao GISS Online de Santos com emissão, consulta, substituição e cancelamento">
-              <img src="assets/yuta-nfse.png" alt="" loading="lazy" decoding="async"><span data-i18n="c2_s4_tab">NFS-e</span>
+              <img src="assets/yuta-nfse.png" alt="" loading="lazy" decoding="async"><span data-i18n="c2_s5_tab">NFS-e</span>
             </button>
           </div>
           <div class="shot-hint" data-i18n="shots_hint">Telas reais do sistema em produção — clique para ampliar</div>
@@ -2878,18 +2882,21 @@
       c2_result_b:'RESULTADO',
       c2_result_t:'Reduziu o tempo de geração de um faturamento completo de <b>horas para minutos</b>, com auditoria completa de envios fiscais ao GISS Online.',
 
-      c2_s1_t:'Central de comandos',
-      c2_s1_d:'Todas as rotinas em um só lugar — gestão, cadastros, faturamentos e configurações. Cada botão dispara uma automação completa.',
-      c2_s1_tab:'Central',
+      c2_s1_t:'Login multiusuário',
+      c2_s1_d:'Cada operador entra com seu próprio perfil e senha — toda ação no sistema fica registrada por usuário.',
+      c2_s1_tab:'Login',
       c2_s2_t:'Entradas e saídas de navios',
       c2_s2_d:'Espelho digital da planilha operacional: busca por navio ou agência, filtros por período e status de cada requisição em tempo real.',
       c2_s2_tab:'Navios',
       c2_s3_t:'Controle de faturamento',
       c2_s3_d:'Linha a linha: ETB, ETS, responsável, serviço, prazo e status de envio — tudo conferível antes de faturar, sem abrir o Excel.',
       c2_s3_tab:'Faturamento',
-      c2_s4_t:'Emissor de NFS-e',
-      c2_s4_d:'Emissão, consulta, substituição e cancelamento de NFS-e direto no GISS Online da Prefeitura de Santos — em ambiente de produção.',
-      c2_s4_tab:'NFS-e',
+      c2_s4_t:'Relatórios por cliente',
+      c2_s4_d:'Ranking de clientes por faturamento, lucro ADM, valores a receber e pontos — filtros por métrica, mês, ano e cliente, com gráfico atualizado na hora.',
+      c2_s4_tab:'Relatório',
+      c2_s5_t:'Emissor de NFS-e',
+      c2_s5_d:'Emissão, consulta, substituição e cancelamento de NFS-e direto no GISS Online da Prefeitura de Santos — em ambiente de produção.',
+      c2_s5_tab:'NFS-e',
       shots_hint:'Telas reais do sistema em produção — clique para ampliar',
       shots_zoom:'Ampliar',
 
@@ -3039,18 +3046,21 @@
       c2_result_b:'OUTCOME',
       c2_result_t:'Reduced the time to generate a full billing run from <b>hours to minutes</b>, with full audit of fiscal submissions to GISS Online.',
 
-      c2_s1_t:'Command center',
-      c2_s1_d:'Every routine in one place — management, registrations, billing and settings. Each button triggers a complete automation.',
-      c2_s1_tab:'Hub',
+      c2_s1_t:'Multi-user login',
+      c2_s1_d:'Each operator signs in with their own profile and password — every action in the system is logged per user.',
+      c2_s1_tab:'Login',
       c2_s2_t:'Vessel arrivals &amp; departures',
       c2_s2_d:'A digital mirror of the operational spreadsheet: search by vessel or agency, period filters and live request status.',
       c2_s2_tab:'Vessels',
       c2_s3_t:'Billing control',
       c2_s3_d:'Line by line: ETB, ETS, owner, service, deadline and submission status — everything checkable before billing, without opening Excel.',
       c2_s3_tab:'Billing',
-      c2_s4_t:'NFS-e issuer',
-      c2_s4_d:'Issue, query, replace and cancel NFS-e invoices directly at Santos City Hall’s GISS Online — in the production environment.',
-      c2_s4_tab:'NFS-e',
+      c2_s4_t:'Per-client reports',
+      c2_s4_d:'Client ranking by revenue, ADM profit, receivables and points — metric, month, year and client filters with a chart that updates instantly.',
+      c2_s4_tab:'Reports',
+      c2_s5_t:'NFS-e issuer',
+      c2_s5_d:'Issue, query, replace and cancel NFS-e invoices directly at Santos City Hall’s GISS Online — in the production environment.',
+      c2_s5_tab:'NFS-e',
       shots_hint:'Real screens from the system in production — click to enlarge',
       shots_zoom:'Enlarge',
 
