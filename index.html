@@ -1333,6 +1333,62 @@
   }
   .shot-hint::before{ content:""; width:14px; height:1px; background:var(--fg-faint); }
 
+  /* About / founder */
+  .about{
+    display:grid;
+    grid-template-columns:minmax(0, 400px) 1fr;
+    gap:clamp(36px, 6vw, 80px);
+    align-items:center;
+  }
+  .about-photo{
+    position:relative;
+    margin:0;
+    border:1px solid var(--line-strong);
+    border-radius:var(--r-lg);
+    overflow:hidden;
+    box-shadow:
+      0 40px 80px -30px rgba(0,0,0,.7),
+      0 0 0 1px rgba(26,169,255,.08),
+      inset 0 1px 0 rgba(255,255,255,.04);
+  }
+  .about-photo img{
+    display:block;
+    width:100%;
+    aspect-ratio:4/5;
+    object-fit:cover;
+  }
+  .about-photo::after{
+    content:"";
+    position:absolute; inset:0; z-index:0;
+    background:
+      linear-gradient(180deg, rgba(5,8,16,0) 55%, rgba(5,8,16,.9) 100%),
+      radial-gradient(420px 160px at 70% 0%, rgba(26,169,255,.08), transparent 70%);
+    pointer-events:none;
+  }
+  .about-badge{
+    position:absolute; left:0; right:0; bottom:0; z-index:1;
+    padding:16px 20px 18px;
+  }
+  .about-badge b{
+    display:block;
+    font-family:var(--display);
+    font-size:15.5px; font-weight:600; letter-spacing:-.01em;
+    color:#fff;
+  }
+  .about-badge span{
+    display:block;
+    margin-top:5px;
+    font-family:var(--mono);
+    font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+    color:#9fd2ff;
+  }
+  .about-text p{ margin-top:18px; max-width:560px; }
+  .about-facts{ margin-top:34px; max-width:540px; }
+  @media (max-width:920px){
+    .about{ grid-template-columns:1fr; }
+    .about-photo{ max-width:380px; }
+  }
+
   /* Lightbox */
   .shotbox{
     position:fixed; inset:0; z-index:200;
@@ -1970,6 +2026,7 @@
       <a href="#cases" data-i18n="nav_cases">Cases</a>
       <a href="#diferenciais" data-i18n="nav_differentials">Diferenciais</a>
       <a href="#processo" data-i18n="nav_process">Processo</a>
+      <a href="#sobre" data-i18n="nav_about">Sobre</a>
       <a href="#contato" data-i18n="nav_contact">Contato</a>
     </nav>
     <div class="nav-cta">
@@ -1994,6 +2051,7 @@
   <a href="#cases" data-i18n="nav_cases">Cases</a>
   <a href="#diferenciais" data-i18n="nav_differentials">Diferenciais</a>
   <a href="#processo" data-i18n="nav_process">Processo</a>
+  <a href="#sobre" data-i18n="nav_about">Sobre</a>
   <a href="#contato" data-i18n="nav_contact">Contato</a>
   <div class="lang-switch mobile" role="tablist" aria-label="Language">
     <button type="button" data-lang="pt" class="on">Português</button>
@@ -2532,6 +2590,37 @@
   </div>
 </section>
 
+<!-- ================= ABOUT / FOUNDER ================= -->
+<section class="section" id="sobre">
+  <div class="container">
+    <div class="about">
+      <figure class="about-photo" data-reveal>
+        <img src="assets/guilherme.jpg" alt="Guilherme Lopes do Carmo Silva, fundador da Azaz Tech" loading="lazy" decoding="async">
+        <figcaption class="about-badge">
+          <b>Guilherme Lopes do Carmo Silva</b>
+          <span data-i18n="about_role">Fundador &amp; Desenvolvedor de Software</span>
+        </figcaption>
+      </figure>
+      <div class="about-text" data-reveal style="--rd:120ms">
+        <span class="eyebrow" data-i18n="about_eyebrow">QUEM ESTÁ POR TRÁS</span>
+        <h2 style="margin-top:18px;background:linear-gradient(180deg,#fff,#b7c2d2);-webkit-background-clip:text;background-clip:text;color:transparent;" data-i18n="about_title">Muito prazer — eu sou o Guilherme.</h2>
+        <p data-i18n="about_p1">Guilherme Lopes do Carmo Silva é o programador à frente da Azaz Tech: formado em Tecnologia da Informação pela Univesp, aprovado em dois concursos públicos e responsável por projetar, escrever e manter cada sistema entregue aqui.</p>
+        <p data-i18n="about_p2">São sistemas dele que rodam todos os dias em operações do Porto de Santos — do ERP portuário Cargo Stock ao hub de automação fiscal Yuta. Menos intermediários, mais responsabilidade: aqui você fala direto com quem constrói.</p>
+        <div class="case-metrics about-facts">
+          <div class="m"><div class="v"><span data-age>26</span></div><div class="k" data-i18n="about_f1">anos</div></div>
+          <div class="m"><div class="v" data-i18n="about_f2v">TI</div><div class="k" data-i18n="about_f2">formação — Univesp</div></div>
+          <div class="m"><div class="v">2×</div><div class="k" data-i18n="about_f3">aprovações em concursos públicos</div></div>
+          <div class="m"><div class="v">2</div><div class="k" data-i18n="about_f4">sistemas em produção no porto</div></div>
+        </div>
+        <a href="#contato" class="btn btn-primary" style="margin-top:30px;">
+          <span data-i18n="about_cta">Fale direto comigo</span>
+          <svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ================= METRICS ================= -->
 <section class="metrics">
   <div class="container">
@@ -2659,6 +2748,7 @@
         <ul>
           <li><a href="#diferenciais" data-i18n="nav_differentials">Diferenciais</a></li>
           <li><a href="#processo" data-i18n="nav_process">Processo</a></li>
+          <li><a href="#sobre" data-i18n="nav_about">Sobre</a></li>
           <li><a href="#contato" data-i18n="nav_contact">Contato</a></li>
           <li><a href="#" data-i18n="foot_link_careers">Carreiras</a></li>
         </ul>
@@ -2743,7 +2833,7 @@
   // ===== I18N DICTIONARY =====
   const I18N = {
     pt: {
-      nav_services:'Serviços', nav_cases:'Cases', nav_differentials:'Diferenciais', nav_process:'Processo', nav_contact:'Contato',
+      nav_services:'Serviços', nav_cases:'Cases', nav_differentials:'Diferenciais', nav_process:'Processo', nav_about:'Sobre', nav_contact:'Contato',
       nav_cta:'Solicitar proposta',
 
       hero_eyebrow:'ENGENHARIA DE SOFTWARE • BRASIL',
@@ -2900,6 +2990,18 @@
       shots_hint:'Telas reais do sistema em produção — clique para ampliar',
       shots_zoom:'Ampliar',
 
+      about_eyebrow:'QUEM ESTÁ POR TRÁS',
+      about_title:'Muito prazer — eu sou o Guilherme.',
+      about_p1:'Guilherme Lopes do Carmo Silva é o programador à frente da Azaz Tech: formado em Tecnologia da Informação pela Univesp, aprovado em dois concursos públicos e responsável por projetar, escrever e manter cada sistema entregue aqui.',
+      about_p2:'São sistemas dele que rodam todos os dias em operações do Porto de Santos — do ERP portuário Cargo Stock ao hub de automação fiscal Yuta. Menos intermediários, mais responsabilidade: aqui você fala direto com quem constrói.',
+      about_role:'Fundador &amp; Desenvolvedor de Software',
+      about_f1:'anos',
+      about_f2v:'TI',
+      about_f2:'formação — Univesp',
+      about_f3:'aprovações em concursos públicos',
+      about_f4:'sistemas em produção no porto',
+      about_cta:'Fale direto comigo',
+
       tw_title:'Tweaks',
       tw_lang:'Idioma',
       tw_accent:'Acento',
@@ -2907,7 +3009,7 @@
       tw_headline:'Headline', tw_headline_ph:'Headline do hero'
     },
     en: {
-      nav_services:'Services', nav_cases:'Case studies', nav_differentials:'Why us', nav_process:'Process', nav_contact:'Contact',
+      nav_services:'Services', nav_cases:'Case studies', nav_differentials:'Why us', nav_process:'Process', nav_about:'About', nav_contact:'Contact',
       nav_cta:'Request a proposal',
 
       hero_eyebrow:'SOFTWARE ENGINEERING • BRAZIL',
@@ -3063,6 +3165,18 @@
       c2_s5_tab:'NFS-e',
       shots_hint:'Real screens from the system in production — click to enlarge',
       shots_zoom:'Enlarge',
+
+      about_eyebrow:'THE PERSON BEHIND IT',
+      about_title:'Nice to meet you — I’m Guilherme.',
+      about_p1:'Guilherme Lopes do Carmo Silva is the developer behind Azaz Tech: an Information Technology graduate from Univesp, approved in two public-service exams, and the one who designs, writes and maintains every system delivered here.',
+      about_p2:'His systems run every day inside Port of Santos operations — from the Cargo Stock port ERP to the Yuta fiscal automation hub. Fewer middlemen, more accountability: you talk directly to the person who builds.',
+      about_role:'Founder &amp; Software Developer',
+      about_f1:'years old',
+      about_f2v:'IT',
+      about_f2:'degree — Univesp',
+      about_f3:'public-exam approvals',
+      about_f4:'systems in production at the port',
+      about_cta:'Talk directly to me',
 
       tw_title:'Tweaks',
       tw_lang:'Language',
@@ -3347,6 +3461,15 @@
   const boxImg = box.querySelector('.sb-inner > img');
   const boxCap = box.querySelector('.sb-cap');
   const inner  = box.querySelector('.sb-inner');
+
+  // Idade automática — nascimento: 11/03/2000
+  (function(){
+    const BY = 2000, BM = 3, BD = 11;
+    const now = new Date();
+    let age = now.getFullYear() - BY;
+    if (now.getMonth() + 1 < BM || (now.getMonth() + 1 === BM && now.getDate() < BD)) age--;
+    document.querySelectorAll('[data-age]').forEach(el => { el.textContent = age; });
+  })();
 
   let active = null;
 
