@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>Conectando ao TikTok — Azaz Tech</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Albert+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/assets/legal.css" />
+<style>
+  .wrap{max-width:620px}
+  .estado{display:flex; align-items:center; gap:12px; margin:0 0 18px}
+  .spinner{width:20px; height:20px; border-radius:50%; border:2px solid rgba(255,255,255,.15); border-top-color:var(--electric); animation:gira .8s linear infinite}
+  @keyframes gira{to{transform:rotate(360deg)}}
+  .codigo{font-family:var(--mono); font-size:15px; word-break:break-all; background:rgba(255,255,255,.05); border:1px solid var(--line-strong); border-radius:var(--r-md); padding:14px; margin:0 0 14px; color:var(--fg)}
+  .botao{font:500 14px/1 var(--body); color:#fff; background:linear-gradient(135deg,var(--royal),var(--electric)); border:0; border-radius:999px; padding:12px 22px; cursor:pointer}
+  .oculto{display:none}
+</style>
+</head>
+<body data-active="pt">
+<div class="wrap">
+
+  <header class="top">
+    <a class="brand" href="/"><span class="dot"></span> Azaz Tech</a>
+  </header>
+
+  <h1>Conectando ao TikTok</h1>
+
+  <!-- Enquanto tenta devolver o codigo para o aplicativo aberto no computador. -->
+  <div class="card" id="passando">
+    <div class="estado"><div class="spinner"></div><strong>Devolvendo a autorização para o aplicativo…</strong></div>
+    <p>Pode fechar esta aba assim que o aplicativo confirmar a conexão.</p>
+  </div>
+
+  <!-- Se o aplicativo nao estiver escutando, o operador copia o codigo na mao. -->
+  <div class="card oculto" id="manual">
+    <p><strong>Copie o código abaixo e cole no aplicativo</strong> (campo "código de autorização"):</p>
+    <div class="codigo" id="valor"></div>
+    <button class="botao" type="button" id="copiar">Copiar código</button>
+  </div>
+
+  <div class="card oculto" id="erro">
+    <p><strong>A autorização não foi concluída.</strong></p>
+    <p id="erro-detalhe"></p>
+    <p>Volte ao aplicativo e tente conectar novamente.</p>
+  </div>
+
+  <footer class="bot">
+    © 2026 Azaz Tech · <a href="/privacidade/">Política de Privacidade</a> · <a href="/termos/">Termos de Uso</a>
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    // Porta em que o aplicativo de desktop escuta durante a conexao (CONFIG.TIKTOK_OAUTH_PORTA).
+    var PORTA = 43117;
+
+    var params = new URLSearchParams(location.search);
+    var code = params.get('code');
+    var state = params.get('state') || '';
+    var erro = params.get('error') || params.get('errCode');
+    var descricao = params.get('error_description') || params.get('errMsg') || '';
+
+    var passando = document.getElementById('passando');
+    var manual = document.getElementById('manual');
+    var caixaErro = document.getElementById('erro');
+
+    function mostrar(el) {
+      [passando, manual, caixaErro].forEach(function (n) { n.classList.add('oculto'); });
+      el.classList.remove('oculto');
+    }
+
+    if (erro || !code) {
+      document.getElementById('erro-detalhe').textContent = descricao || erro || 'O TikTok não devolveu o código de autorização.';
+      mostrar(caixaErro);
+      return;
+    }
+
+    // Caminho normal: o aplicativo esta aberto e escutando em 127.0.0.1.
+    var alvo = 'http://127.0.0.1:' + PORTA + '/tiktok?code=' + encodeURIComponent(code) +
+               '&state=' + encodeURIComponent(state);
+
+    var respondeu = false;
+    fetch(alvo, { mode: 'no-cors', cache: 'no-store' })
+      .then(function () { respondeu = true; })
+      .catch(function () {});
+
+    // Se em 2,5s o aplicativo nao deu sinal, cai para a copia manual do codigo.
+    setTimeout(function () {
+      if (respondeu) return;
+      document.getElementById('valor').textContent = code;
+      mostrar(manual);
+    }, 2500);
+
+    document.getElementById('copiar').addEventListener('click', function () {
+      var texto = document.getElementById('valor').textContent;
+      if (navigator.clipboard) { navigator.clipboard.writeText(texto); }
+      this.textContent = 'Copiado!';
+    });
+  })();
+</script>
+</body>
+</html>
